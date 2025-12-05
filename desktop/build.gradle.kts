@@ -1,28 +1,26 @@
 plugins {
-    id("java")
+    java
+    application
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
-group = "com.arko.passman"
-version = "1.0-SNAPSHOT"
+group = "com.passman.desktop"
+version = "1.0.0"
 
-repositories {
-    mavenCentral()
+application {
+    mainClass.set("com.passman.desktop.MainApp")
+}
+
+javafx {
+    version = "20"
+    modules = listOf("javafx.controls", "javafx.fxml", "javafx.web")
 }
 
 dependencies {
     implementation(project(":core"))
-    // add JavaFX and other deps later, e.g.:
-    // implementation("org.openjfx:javafx-controls:20")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-//application {
-    // mainClass.set("com.passman.desktop.MainApp") // set after you create MainApp
-//}
-
-tasks.test {
-    useJUnitPlatform()
+    implementation("com.google.zxing:core:3.5.2")
+    implementation("com.google.zxing:javase:3.5.2")
+    implementation("com.google.api-client:google-api-client:2.2.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+    implementation("com.google.apis:google-api-services-drive:v3-rev20230822-2.0.0")
 }
