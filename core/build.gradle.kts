@@ -1,20 +1,13 @@
 plugins {
-    id("java")
+    java
 }
 
-group = "com.arko.passman"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
+group = "com.passman.core"
+version = "1.0.0"
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-tasks.test {
-    useJUnitPlatform()
+    implementation("org.xerial:sqlite-jdbc:3.43.0.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
+    testImplementation("org.mockito:mockito-core:5.5.0")
 }
