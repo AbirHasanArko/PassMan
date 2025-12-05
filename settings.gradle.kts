@@ -1,3 +1,3 @@
 rootProject.name = "PassMan"
-
-include("core", "desktop")
+include(":core")
+include(":desktop")
