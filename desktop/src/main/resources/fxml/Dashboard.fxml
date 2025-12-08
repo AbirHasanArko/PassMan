@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene. layout.*?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.passman.desktop.ui.dashboard.DashboardController"
+            styleClass="dashboard-container">
+
+    <top>
+        <HBox styleClass="toolbar" spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+
+            <Label text="PassMan" styleClass="toolbar-title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <TextField fx:id="searchField"
+                       promptText="Search credentials..."
+                       styleClass="search-field"
+                       prefWidth="300"/>
+
+            <Button fx:id="addButton"
+                    text="+ Add"
+                    onAction="#handleAddCredential"
+                    styleClass="primary-button"/>
+
+            <MenuButton text="⋮" styleClass="menu-button">
+                <items>
+                    <MenuItem text="Backup/Restore" onAction="#handleBackup"/>
+                    <MenuItem text="Settings"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Logout" onAction="#handleLogout"/>
+                </items>
+            </MenuButton>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox styleClass="nav-drawer" spacing="5" prefWidth="200">
+            <padding>
+                <Insets top="15" right="10" bottom="15" left="10"/>
+            </padding>
+
+            <Label text="VAULT" styleClass="nav-section-title"/>
+            <Button text="🔐 Passwords" maxWidth="Infinity" styleClass="nav-button"/>
+            <Button text="💳 Cards" maxWidth="Infinity" styleClass="nav-button"/>
+            <Button text="🪪 IDs" maxWidth="Infinity" styleClass="nav-button"/>
+
+            <Separator/>
+
+            <Label text="TOOLS" styleClass="nav-section-title"/>
+            <Button text="🔑 Generator" onAction="#handleGeneratePassword" maxWidth="Infinity" styleClass="nav-button"/>
+            <Button text="📊 Graph" onAction="#handleGraph" maxWidth="Infinity" styleClass="nav-button"/>
+            <Button text="📱 QR Share" onAction="#handleQRShare" maxWidth="Infinity" styleClass="nav-button"/>
+
+            <Separator/>
+
+            <Label text="GAMIFY" styleClass="nav-section-title"/>
+            <Button text="🎯 Quiz" onAction="#handleQuiz" maxWidth="Infinity" styleClass="nav-button"/>
+            <Button text="🏆 Missions" maxWidth="Infinity" styleClass="nav-button"/>
+
+            <Separator/>
+
+            <Button text="👤 Admin" onAction="#handleAdmin" maxWidth="Infinity" styleClass="nav-button"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="15">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <HBox spacing="15">
+                <VBox styleClass="summary-card" HBox.hgrow="ALWAYS">
+                    <Label text="Total Passwords" styleClass="card-title"/>
+                    <Label text="47" styleClass="card-value"/>
+                </VBox>
+
+                <VBox styleClass="summary-card" HBox.hgrow="ALWAYS">
+                    <Label text="Weak Passwords" styleClass="card-title"/>
+                    <Label text="5" styleClass="card-value-warning"/>
+                </VBox>
+
+                <VBox styleClass="summary-card" HBox.hgrow="ALWAYS">
+                    <Label text="Reused" styleClass="card-title"/>
+                    <Label text="3" styleClass="card-value-danger"/>
+                </VBox>
+
+                <VBox styleClass="summary-card" HBox.hgrow="ALWAYS">
+                    <Label text="Avg Age" styleClass="card-title"/>
+                    <Label text="127 days" styleClass="card-value"/>
+                </VBox>
+            </HBox>
+
+            <fx:include source="PasswordTableView.fxml"/>
+        </VBox>
+    </center>
+
+</BorderPane>

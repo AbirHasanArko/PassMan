@@ -1,0 +1,339 @@
+/* ============================================
+   PassMan Desktop - Main Stylesheet (JavaFX Compatible)
+   ============================================ */
+
+/* ============================================
+   Login Screen
+   ============================================ */
+
+. login-container {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #667eea, #764ba2);
+}
+
+.login-box {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 20, 0, 0, 5);
+}
+
+.app-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-fill: #2563eb;
+}
+
+.app-subtitle {
+    -fx-font-size: 14px;
+    -fx-fill: #64748b;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+    -fx-font-weight: 600;
+}
+
+.password-field {
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 6px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 6px;
+}
+
+.password-field:focused {
+    -fx-border-color: #2563eb;
+    -fx-border-width: 2px;
+}
+
+.error-label {
+    -fx-text-fill: #ef4444;
+    -fx-font-size: 12px;
+}
+
+.info-label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 12px;
+}
+
+.link {
+    -fx-text-fill: #2563eb;
+    -fx-font-size: 12px;
+}
+
+.link:hover {
+    -fx-underline: true;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.primary-button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 24px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+.primary-button:disabled {
+    -fx-background-color: #64748b;
+    -fx-opacity: 0.6;
+}
+
+.secondary-button {
+    -fx-background-color: #f8fafc;
+    -fx-text-fill: #1e293b;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 6px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* ============================================
+   Dashboard
+   ============================================ */
+
+.dashboard-container {
+    -fx-background-color: #f8fafc;
+}
+
+. toolbar {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.toolbar-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2563eb;
+}
+
+.search-field {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 20px;
+    -fx-padding: 8px 16px;
+    -fx-prompt-text-fill: #94a3b8;
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-font-size: 24px;
+    -fx-padding: 5px 10px;
+}
+
+.nav-drawer {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 1 0 0;
+}
+
+.nav-section-title {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: 600;
+    -fx-padding: 10px 5px 5px 5px;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1e293b;
+    -fx-alignment: center-left;
+    -fx-padding: 10px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #f8fafc;
+}
+
+. nav-button:armed {
+    -fx-background-color: #f1f5f9;
+}
+
+/* ============================================
+   Summary Cards
+   ============================================ */
+
+.summary-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-padding: 20px;
+    -fx-spacing: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 10, 0, 0, 2);
+}
+
+.card-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.card-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+. card-value-warning {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f59e0b;
+}
+
+.card-value-danger {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ef4444;
+}
+
+/* ============================================
+   Table View
+   ============================================ */
+
+.credentials-table {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+}
+
+.credentials-table .column-header {
+    -fx-background-color: #f8fafc;
+    -fx-font-weight: 600;
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.credentials-table .table-row-cell {
+    -fx-background-color: white;
+}
+
+.credentials-table .table-row-cell:hover {
+    -fx-background-color: #f8fafc;
+}
+
+.credentials-table . table-row-cell:selected {
+    -fx-background-color: rgba(37, 99, 235, 0.1);
+}
+
+. credentials-table .table-cell {
+    -fx-padding: 12px 8px;
+    -fx-font-size: 13px;
+}
+
+/* ============================================
+   Progress Indicator
+   ============================================ */
+
+.progress-indicator {
+    -fx-progress-color: #2563eb;
+}
+
+/* ============================================
+   Separator
+   ============================================ */
+
+.separator . line {
+    -fx-background-color: #e2e8f0;
+    -fx-border-color: #e2e8f0;
+}
+
+/* ============================================
+   Text Field
+   ============================================ */
+
+.text-field {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 12px;
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 6px;
+}
+
+.text-field:focused {
+    -fx-border-color: #2563eb;
+    -fx-border-width: 2px;
+}
+
+/* ============================================
+   Text Area
+   ============================================ */
+
+.text-area {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 12px;
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 6px;
+}
+
+.text-area:focused {
+    -fx-border-color: #2563eb;
+    -fx-border-width: 2px;
+}
+
+. text-area . content {
+    -fx-background-color: white;
+}
+
+/* ============================================
+   Checkbox
+   ============================================ */
+
+.check-box {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+}
+
+.check-box . box {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #2563eb;
+    -fx-border-color: #2563eb;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* ============================================
+   Slider
+   ============================================ */
+
+. slider . track {
+    -fx-background-color: #e2e8f0;
+}
+
+.slider .thumb {
+    -fx-background-color: #2563eb;
+}
+
+/* ============================================
+   Label
+   ============================================ */
+
+.label {
+    -fx-text-fill: #1e293b;
+    -fx-font-size: 14px;
+}

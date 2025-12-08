@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx. com/javafx"
+            xmlns:fx="http://javafx. com/fxml"
+            fx:controller="com.passman.desktop.ui.vaults.VaultContentsController"
+            style="-fx-background-color: #f8fafc;">
+
+    <top>
+        <HBox styleClass="toolbar" spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+
+            <Label fx:id="vaultNameLabel" text="Vault Name" styleClass="toolbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="📤 Upload File" onAction="#handleUploadFile" styleClass="primary-button"/>
+            <Button text="Close" onAction="#handleClose" styleClass="secondary-button"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="15">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <TableView fx:id="filesTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="nameColumn" text="File Name" prefWidth="250"/>
+                    <TableColumn fx:id="sizeColumn" text="Size" prefWidth="100"/>
+                    <TableColumn fx:id="typeColumn" text="Type" prefWidth="100"/>
+                    <TableColumn fx:id="dateColumn" text="Upload Date" prefWidth="150"/>
+                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="250"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+</BorderPane>

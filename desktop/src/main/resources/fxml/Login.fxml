@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.passman.desktop.ui.login.LoginController"
+            styleClass="login-container">
+
+    <center>
+        <VBox alignment="CENTER" spacing="20" maxWidth="400" styleClass="login-box">
+            <padding>
+                <Insets top="40" right="40" bottom="40" left="40"/>
+            </padding>
+
+            <Text text="PassMan" styleClass="app-title"/>
+            <Text text="All in One Security Solution" styleClass="app-subtitle"/>
+
+            <Separator/>
+
+            <VBox spacing="8">
+                <Label text="Master Password:" styleClass="field-label"/>
+                <PasswordField fx:id="masterPasswordField"
+                               promptText="Enter your master password"
+                               styleClass="password-field"/>
+            </VBox>
+
+            <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"/>
+
+            <Button fx:id="loginButton"
+                    text="Login"
+                    onAction="#handleLogin"
+                    defaultButton="true"
+                    maxWidth="Infinity"
+                    styleClass="primary-button"/>
+
+            <ProgressIndicator fx:id="progressIndicator" visible="false"/>
+
+            <Hyperlink text="Forgot your master password?"
+                       onAction="#handleForgotPassword"
+                       styleClass="link"/>
+
+            <Separator/>
+
+            <Label text="Last login: Never" styleClass="info-label"/>
+        </VBox>
+    </center>
+
+</BorderPane>

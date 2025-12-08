@@ -1,20 +1,30 @@
 plugins {
-    id("java")
+    java
 }
 
-group = "com.arko.passman"
-version = "1.0-SNAPSHOT"
+group = "com.passman"
+version = "1.0.0"
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
 
-dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
+subprojects {
+    apply(plugin = "java")
 
-tasks.test {
-    useJUnitPlatform()
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    dependencies {
+        testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    }
+
+    tasks. test {
+        useJUnitPlatform()
+    }
 }
