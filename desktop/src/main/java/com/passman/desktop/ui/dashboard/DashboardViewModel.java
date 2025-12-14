@@ -1,92 +1,140 @@
-package com.passman.desktop.ui.dashboard;
+package com.passman. desktop.ui.dashboard;
 
+import com.passman.core.models. Credential;
+import com.passman. core.repository.CredentialRepository;
+import com.passman.core.services.EncryptionService;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx. beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
+import javafx. collections.ObservableList;
 
+import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
+import java. time.temporal.ChronoUnit;
+
+/**
+ * ViewModel for Dashboard with credential management
+ */
 public class DashboardViewModel {
 
     private final StringProperty searchQuery = new SimpleStringProperty("");
     private final ObservableList<CredentialItem> credentials = FXCollections.observableArrayList();
-    private final FilteredList<CredentialItem> filteredCredentials;
-    private final SortedList<CredentialItem> sortedCredentials;
 
-    public DashboardViewModel() {
-        loadMockData();
+    private final CredentialRepository credentialRepository;
+    private final EncryptionService encryptionService;
+    private SecretKey masterKey;
 
-        filteredCredentials = new FilteredList<>(credentials, p -> true);
+    public DashboardViewModel(CredentialRepository repository, EncryptionService encryptionService) {
+        this.credentialRepository = repository;
+        this.encryptionService = encryptionService;
 
-        searchQuery.addListener((obs, oldVal, newVal) -> {
-            filteredCredentials.setPredicate(credential -> {
-                if (newVal == null || newVal. isEmpty()) {
-                    return true;
-                }
-
-                String lowerCaseFilter = newVal.toLowerCase();
-
-                if (credential.getTitle().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (credential.getUsername(). toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (credential.getUrl().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-
-                return false;
-            });
-        });
-
-        sortedCredentials = new SortedList<>(filteredCredentials);
+        // Listen to search query changes
+        searchQuery.addListener((obs, oldVal, newVal) -> performSearch(newVal));
     }
 
-    private void loadMockData() {
-        credentials.addAll(
-                new CredentialItem(1L, "GitHub", "john.doe@email.com", "https://github.com", 30, "Strong", false),
-                new CredentialItem(2L, "Google", "john.doe@gmail.com", "https://google.com", 90, "Medium", false),
-                new CredentialItem(3L, "Facebook", "johndoe", "https://facebook.com", 180, "Weak", true),
-                new CredentialItem(4L, "Twitter", "@johndoe", "https://twitter.com", 45, "Strong", false),
-                new CredentialItem(5L, "LinkedIn", "john.doe@email.com", "https://linkedin.com", 200, "Medium", true)
-        );
+    public void setMasterKey(SecretKey key) {
+        this.masterKey = key;
+        loadCredentials();
     }
 
-    public StringProperty searchQueryProperty() { return searchQuery; }
-    public SortedList<CredentialItem> getSortedCredentials() { return sortedCredentials; }
+    public void loadCredentials() {
+        try {
+            credentials.clear();
+            var allCreds = credentialRepository.findAll();
 
+            for (Credential cred : allCreds) {
+                credentials.add(mapToCredentialItem(cred));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void performSearch(String query) {
+        try {
+            credentials.clear();
+
+            if (query == null || query.trim().isEmpty()) {
+                loadCredentials();
+                return;
+            }
+
+            var results = credentialRepository.searchByTitle(query);
+            for (Credential cred : results) {
+                credentials.add(mapToCredentialItem(cred));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private CredentialItem mapToCredentialItem(Credential cred) {
+        CredentialItem item = new CredentialItem();
+        item.setId(cred.getId());
+        item.setTitle(cred.getTitle());
+        item.setUsername(cred.getUsername());
+        item.setUrl(cred.getUrl());
+        item.setAgeBadge(calculateAgeBadge(cred.getCreatedAt()));
+        item.setStrength(calculateStrength(cred));
+        item.setHasReuse(false); // TODO: Implement reuse detection
+        return item;
+    }
+
+    private String calculateAgeBadge(LocalDateTime createdAt) {
+        long days = ChronoUnit.DAYS.between(createdAt, LocalDateTime.now());
+        if (days < 90) return "Fresh";
+        if (days < 365) return "Old";
+        return "Very Old";
+    }
+
+    private String calculateStrength(Credential cred) {
+        // Simple strength calculation based on encrypted password length
+        int length = cred.getEncryptedPassword().length;
+        if (length > 50) return "Strong";
+        if (length > 30) return "Medium";
+        return "Weak";
+    }
+
+    public StringProperty searchQueryProperty() {
+        return searchQuery;
+    }
+
+    public ObservableList<CredentialItem> getCredentials() {
+        return credentials;
+    }
+
+    /**
+     * UI-friendly credential item
+     */
     public static class CredentialItem {
-        private final Long id;
-        private final String title;
-        private final String username;
-        private final String url;
-        private final int ageDays;
-        private final String strength;
-        private final boolean hasReuse;
+        private Long id;
+        private String title;
+        private String username;
+        private String url;
+        private String ageBadge;
+        private String strength;
+        private boolean hasReuse;
 
-        public CredentialItem(Long id, String title, String username, String url,
-                              int ageDays, String strength, boolean hasReuse) {
-            this.id = id;
-            this.title = title;
-            this.username = username;
-            this.url = url;
-            this.ageDays = ageDays;
-            this.strength = strength;
-            this.hasReuse = hasReuse;
-        }
-
+        // Getters and Setters
         public Long getId() { return id; }
-        public String getTitle() { return title; }
-        public String getUsername() { return username; }
-        public String getUrl() { return url; }
-        public int getAgeDays() { return ageDays; }
-        public String getStrength() { return strength; }
-        public boolean hasReuse() { return hasReuse; }
+        public void setId(Long id) { this.id = id; }
 
-        public String getAgeBadge() {
-            if (ageDays < 90) return "Fresh";
-            if (ageDays < 180) return "Old";
-            return "Very Old";
-        }
+        public String getTitle() { return title; }
+        public void setTitle(String title) { this.title = title; }
+
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+
+        public String getUrl() { return url; }
+        public void setUrl(String url) { this.url = url; }
+
+        public String getAgeBadge() { return ageBadge; }
+        public void setAgeBadge(String ageBadge) { this.ageBadge = ageBadge; }
+
+        public String getStrength() { return strength; }
+        public void setStrength(String strength) { this.strength = strength; }
+
+        public boolean getHasReuse() { return hasReuse; }
+        public void setHasReuse(boolean hasReuse) { this.hasReuse = hasReuse; }
     }
 }
