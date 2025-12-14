@@ -1,4 +1,4 @@
-package com.passman.core.model;
+package com.passman.core.models;
 
 import java.time.LocalDateTime;
 
