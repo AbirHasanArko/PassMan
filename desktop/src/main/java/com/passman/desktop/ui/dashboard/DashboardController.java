@@ -2,13 +2,21 @@ package com.passman.desktop.ui.dashboard;
 
 import com.passman.desktop.DialogUtils;
 import com.passman.desktop.MainApp;
+import com.passman.desktop.SessionManager;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene. control.Button;
+import javafx.scene. control.Label;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene. control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * Controller for Dashboard
+ */
 public class DashboardController {
+
+    @FXML
+    private Label welcomeLabel;
 
     @FXML
     private TextField searchField;
@@ -17,17 +25,28 @@ public class DashboardController {
     private Button addButton;
 
     @FXML
-    private TableView<DashboardViewModel.CredentialItem> credentialsTable;
-
-    @FXML
-    private PasswordTableViewController passwordTableViewController;
+    private TableView<DashboardViewModel. CredentialItem> credentialsTable;
 
     private DashboardViewModel viewModel;
 
     @FXML
     public void initialize() {
         viewModel = new DashboardViewModel();
-        searchField.textProperty().bindBidirectional(viewModel.searchQueryProperty());
+
+        // Set master key from session
+        if (SessionManager.getInstance().isLoggedIn()) {
+            viewModel.setMasterKey(SessionManager.getInstance().getMasterKey());
+
+            // Set welcome message
+            String username = SessionManager.getInstance().getCurrentUser().getUsername();
+            welcomeLabel. setText("Welcome, " + username + "!");
+        }
+
+        // Bind search field
+        searchField.textProperty().bindBidirectional(viewModel. searchQueryProperty());
+
+        // Load credentials
+        viewModel.loadCredentials();
     }
 
     @FXML
@@ -35,6 +54,7 @@ public class DashboardController {
         try {
             Stage modal = DialogUtils.openModal("/fxml/CredentialEditorDialog.fxml", "Add Credential");
             modal.showAndWait();
+            viewModel.loadCredentials();
         } catch (Exception e) {
             DialogUtils.showError("Error", "Failed to open editor", e.getMessage());
         }
@@ -76,6 +96,16 @@ public class DashboardController {
     }
 
     @FXML
+    private void handleNotes() {
+        MainApp.getSceneManager().switchScene("SecureNotes");
+    }
+
+    @FXML
+    private void handleIdentityCards() {
+        MainApp.getSceneManager().switchScene("IdentityCards");
+    }
+
+    @FXML
     private void handleLogout() {
         boolean confirm = DialogUtils.showConfirmation(
                 "Logout",
@@ -84,6 +114,7 @@ public class DashboardController {
         );
 
         if (confirm) {
+            SessionManager.getInstance().clearSession();
             MainApp.getSceneManager().switchScene("Login");
         }
     }

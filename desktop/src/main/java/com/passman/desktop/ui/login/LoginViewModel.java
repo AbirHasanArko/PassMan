@@ -1,44 +1,40 @@
-package com.passman.desktop.ui.login;
+package com.passman.desktop. ui.login;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx. beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx. beans.property.StringProperty;
 
 /**
- * ViewModel for the Login screen.
+ * ViewModel for Login screen (optional MVVM pattern)
  */
 public class LoginViewModel {
 
     private final StringProperty masterPassword = new SimpleStringProperty("");
     private final StringProperty errorMessage = new SimpleStringProperty("");
-    private final BooleanProperty loginInProgress = new SimpleBooleanProperty(false);
+    private final BooleanProperty isLoading = new SimpleBooleanProperty(false);
+    private final BooleanProperty vaultExists = new SimpleBooleanProperty(false);
 
     public LoginViewModel() {
     }
 
-    public boolean login() {
-        if (masterPassword.get() == null || masterPassword.get(). isEmpty()) {
-            errorMessage. set("Please enter your master password");
-            return false;
-        }
-
-        loginInProgress.set(true);
-
-        // TODO: Implement actual authentication
-        try {
-            Thread.sleep(500); // Simulate auth delay
-            loginInProgress.set(false);
-            return true;
-        } catch (InterruptedException e) {
-            loginInProgress.set(false);
-            errorMessage.set("Login failed");
-            return false;
-        }
-    }
-
-    // Property Getters
+    // Master Password
+    public String getMasterPassword() { return masterPassword.get(); }
+    public void setMasterPassword(String value) { masterPassword.set(value); }
     public StringProperty masterPasswordProperty() { return masterPassword; }
+
+    // Error Message
+    public String getErrorMessage() { return errorMessage.get(); }
+    public void setErrorMessage(String value) { errorMessage.set(value); }
     public StringProperty errorMessageProperty() { return errorMessage; }
-    public BooleanProperty loginInProgressProperty() { return loginInProgress; }
+
+    // Loading State
+    public boolean isLoading() { return isLoading. get(); }
+    public void setLoading(boolean value) { isLoading.set(value); }
+    public BooleanProperty isLoadingProperty() { return isLoading; }
+
+    // Vault Exists
+    public boolean isVaultExists() { return vaultExists.get(); }
+    public void setVaultExists(boolean value) { vaultExists.set(value); }
+    public BooleanProperty vaultExistsProperty() { return vaultExists; }
 }

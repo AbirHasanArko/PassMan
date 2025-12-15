@@ -1,8 +1,9 @@
-package com.passman. desktop.ui.dashboard;
+package com.passman.desktop.ui.dashboard;
 
-import com.passman.core.model. Credential;
-import com.passman. core.repository.CredentialRepository;
-import com.passman.core.services.EncryptionService;
+import com.passman.core.db.DatabaseManager;
+import com. passman.core.model.Credential;
+import com. passman.core.repository.CredentialRepository;
+import com.passman.core.repository.CredentialRepositoryImpl;
 import javafx.beans.property.SimpleStringProperty;
 import javafx. beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -11,6 +12,7 @@ import javafx. collections.ObservableList;
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java. time.temporal.ChronoUnit;
+import java.util.List;
 
 /**
  * ViewModel for Dashboard with credential management
@@ -21,14 +23,17 @@ public class DashboardViewModel {
     private final ObservableList<CredentialItem> credentials = FXCollections.observableArrayList();
 
     private final CredentialRepository credentialRepository;
-    private final EncryptionService encryptionService;
     private SecretKey masterKey;
 
-    public DashboardViewModel(CredentialRepository repository, EncryptionService encryptionService) {
-        this.credentialRepository = repository;
-        this.encryptionService = encryptionService;
+    public DashboardViewModel() {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        this.credentialRepository = new CredentialRepositoryImpl(dbManager);
 
-        // Listen to search query changes
+        searchQuery.addListener((obs, oldVal, newVal) -> performSearch(newVal));
+    }
+
+    public DashboardViewModel(CredentialRepository repository) {
+        this.credentialRepository = repository;
         searchQuery.addListener((obs, oldVal, newVal) -> performSearch(newVal));
     }
 
@@ -40,7 +45,7 @@ public class DashboardViewModel {
     public void loadCredentials() {
         try {
             credentials.clear();
-            var allCreds = credentialRepository.findAll();
+            List<Credential> allCreds = credentialRepository.findAll();
 
             for (Credential cred : allCreds) {
                 credentials.add(mapToCredentialItem(cred));
@@ -59,7 +64,7 @@ public class DashboardViewModel {
                 return;
             }
 
-            var results = credentialRepository.searchByTitle(query);
+            List<Credential> results = credentialRepository.searchByTitle(query);
             for (Credential cred : results) {
                 credentials.add(mapToCredentialItem(cred));
             }
@@ -76,7 +81,7 @@ public class DashboardViewModel {
         item.setUrl(cred.getUrl());
         item.setAgeBadge(calculateAgeBadge(cred.getCreatedAt()));
         item.setStrength(calculateStrength(cred));
-        item.setHasReuse(false); // TODO: Implement reuse detection
+        item.setHasReuse(false);
         return item;
     }
 
@@ -88,7 +93,6 @@ public class DashboardViewModel {
     }
 
     private String calculateStrength(Credential cred) {
-        // Simple strength calculation based on encrypted password length
         int length = cred.getEncryptedPassword().length;
         if (length > 50) return "Strong";
         if (length > 30) return "Medium";
@@ -115,7 +119,6 @@ public class DashboardViewModel {
         private String strength;
         private boolean hasReuse;
 
-        // Getters and Setters
         public Long getId() { return id; }
         public void setId(Long id) { this.id = id; }
 

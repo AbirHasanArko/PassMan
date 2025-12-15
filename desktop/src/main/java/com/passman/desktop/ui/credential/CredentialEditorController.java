@@ -1,12 +1,20 @@
 package com.passman.desktop.ui.credential;
 
+import com.passman.core.db.DatabaseManager;
+import com. passman.core.model. Credential;
+import com.passman.core.repository.CredentialRepositoryImpl;
+import com.passman.core.services.EncryptionServiceImpl;
+import com.passman.desktop.DialogUtils;
+import com.passman.desktop.SessionManager;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx. scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene. control.*;
 import javafx.stage.Stage;
 
+import java.time.LocalDateTime;
+
+/**
+ * Controller for Credential Editor Dialog
+ */
 public class CredentialEditorController {
 
     @FXML private TextField titleField;
@@ -14,43 +22,137 @@ public class CredentialEditorController {
     @FXML private TextField emailField;
     @FXML private TextField urlField;
     @FXML private PasswordField passwordField;
-    @FXML private TextArea notesArea;
-    @FXML private Button saveButton;
-    @FXML private Button cancelButton;
+    @FXML private TextField tagsField;
+    @FXML private TextArea notesField;
+    @FXML private CheckBox favoriteCheckbox;
+    @FXML private ProgressBar strengthBar;
+    @FXML private Label strengthLabel;
 
-    private CredentialEditorViewModel viewModel;
+    private Credential credential;
+    private final CredentialRepositoryImpl repository;
+    private final EncryptionServiceImpl encryptionService;
+
+    public CredentialEditorController() {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+        this.repository = new CredentialRepositoryImpl(dbManager);
+        this.encryptionService = new EncryptionServiceImpl();
+    }
 
     @FXML
     public void initialize() {
-        viewModel = new CredentialEditorViewModel();
+        passwordField.textProperty().addListener((obs, old, newVal) -> {
+            updateStrengthIndicator(newVal);
+        });
+    }
 
-        titleField.textProperty().bindBidirectional(viewModel.titleProperty());
-        usernameField. textProperty().bindBidirectional(viewModel.usernameProperty());
-        emailField.textProperty().bindBidirectional(viewModel.emailProperty());
-        urlField.textProperty().bindBidirectional(viewModel.urlProperty());
-        passwordField.textProperty().bindBidirectional(viewModel.passwordProperty());
-        notesArea.textProperty().bindBidirectional(viewModel.notesProperty());
+    public void setCredential(Credential credential) {
+        this.credential = credential;
+
+        if (credential != null) {
+            titleField. setText(credential.getTitle());
+            usernameField.setText(credential.getUsername());
+            emailField.setText(credential.getEmail());
+            urlField.setText(credential.getUrl());
+            tagsField.setText(credential.getTags());
+            notesField. setText(credential.getNotes());
+            favoriteCheckbox.setSelected(credential.isFavorite());
+
+            try {
+                String decrypted = encryptionService.decryptPassword(
+                        new String(credential.getEncryptedPassword()),
+                        SessionManager.getInstance().getMasterKey()
+                );
+                passwordField. setText(decrypted);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @FXML
     private void handleSave() {
-        viewModel.save();
-        closeDialog();
+        if (titleField.getText().isEmpty() || passwordField.getText().isEmpty()) {
+            DialogUtils.showWarning("Validation Error", "Required Fields",
+                    "Title and Password are required.");
+            return;
+        }
+
+        try {
+            if (credential == null) {
+                credential = new Credential();
+            }
+
+            credential.setTitle(titleField.getText());
+            credential.setUsername(usernameField.getText());
+            credential.setEmail(emailField.getText());
+            credential.setUrl(urlField.getText());
+            credential.setTags(tagsField.getText());
+            credential.setNotes(notesField.getText());
+            credential.setFavorite(favoriteCheckbox.isSelected());
+            credential.setLastModified(LocalDateTime.now());
+
+            String encrypted = encryptionService.encryptPassword(
+                    passwordField.getText(),
+                    SessionManager.getInstance().getMasterKey()
+            );
+            credential.setEncryptedPassword(encrypted. getBytes());
+
+            if (credential.getId() == null) {
+                repository.save(credential);
+            } else {
+                repository.update(credential);
+            }
+
+            handleCancel();
+
+        } catch (Exception e) {
+            DialogUtils.showError("Error", "Failed to save credential", e.getMessage());
+        }
     }
 
     @FXML
     private void handleCancel() {
-        closeDialog();
+        Stage stage = (Stage) titleField.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
-    private void handleGenerate() {
-        System.out.println("Generate password clicked");
-        // TODO: Open password generator
+    private void handleGeneratePassword() {
+        passwordField.setText("GeneratedPassword123!");
     }
 
-    private void closeDialog() {
-        Stage stage = (Stage)saveButton.getScene().getWindow();
-        stage.close();
+    @FXML
+    private void handleTogglePasswordVisibility() {
+        // TODO: Toggle between PasswordField and TextField
+    }
+
+    private void updateStrengthIndicator(String password) {
+        if (password == null || password.isEmpty()) {
+            strengthBar.setProgress(0);
+            strengthLabel.setText("Weak");
+            strengthLabel.setStyle("-fx-text-fill: #dc3545;");
+            return;
+        }
+
+        int score = 0;
+        if (password. length() >= 8) score += 25;
+        if (password.length() >= 12) score += 25;
+        if (password. matches(".*[A-Z].*")) score += 15;
+        if (password.matches(".*[a-z].*")) score += 15;
+        if (password.matches(".*[0-9].*")) score += 10;
+        if (password.matches(".*[! @#$%^&*].*")) score += 10;
+
+        strengthBar.setProgress(score / 100.0);
+
+        if (score >= 75) {
+            strengthLabel.setText("Strong");
+            strengthLabel.setStyle("-fx-text-fill:  #28a745;");
+        } else if (score >= 50) {
+            strengthLabel.setText("Medium");
+            strengthLabel. setStyle("-fx-text-fill: #ffc107;");
+        } else {
+            strengthLabel.setText("Weak");
+            strengthLabel.setStyle("-fx-text-fill: #dc3545;");
+        }
     }
 }
