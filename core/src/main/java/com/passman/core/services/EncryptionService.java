@@ -3,37 +3,27 @@ package com.passman.core.services;
 import javax.crypto.SecretKey;
 
 /**
- * Service for encrypting and decrypting passwords and data
+ * Service interface for encryption/decryption operations
  */
 public interface EncryptionService {
 
     /**
-     * Encrypts plaintext password
+     * Encrypt a password string
      */
-    String encryptPassword(String plaintext, SecretKey masterKey) throws EncryptionException;
+    String encryptPassword(String plaintext, SecretKey key) throws EncryptionException;
 
     /**
-     * Decrypts password
+     * Decrypt a password string
      */
-    String decryptPassword(String ciphertext, SecretKey masterKey) throws DecryptionException;
+    String decryptPassword(String ciphertext, SecretKey key) throws DecryptionException;
 
     /**
-     * Encrypts file data
+     * Encrypt byte array (for files)
      */
-    byte[] encryptFile(byte[] fileData, SecretKey masterKey) throws EncryptionException;
+    byte[] encryptBytes(byte[] data, SecretKey key) throws EncryptionException;
 
     /**
-     * Decrypts file data
+     * Decrypt byte array (for files)
      */
-    byte[] decryptFile(byte[] encryptedData, SecretKey masterKey) throws DecryptionException;
-
-    /**
-     * Derives master key from password
-     */
-    SecretKey deriveMasterKey(char[] password, byte[] salt) throws EncryptionException;
-
-    /**
-     * Generates new salt
-     */
-    byte[] generateSalt();
+    byte[] decryptBytes(byte[] data, SecretKey key) throws DecryptionException;
 }

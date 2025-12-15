@@ -1,21 +1,26 @@
 package com.passman.core.services;
 
+import com.google.gson.Gson;
 import com.passman.core.crypto.AESCipher;
-import com.passman.core.crypto. CipherFactory;
-import com. passman.core.db.DatabaseManager;
-import com.passman. core.model.Backup;
+import com.passman.core.crypto.CipherFactory;
+import com.passman.core.db.DatabaseManager;
+import com.passman.core.model.Backup;
 import com.passman.core.repository.BackupRepository;
 
 import javax.crypto.SecretKey;
-import java.io.*;
-import java.nio.file. Files;
-import java.nio. file.Path;
-import java. nio.file.StandardCopyOption;
-import java. security.MessageDigest;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file. Paths;
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
-import java.util. Base64;
-import java.util. List;
-import java.util. zip.ZipEntry;
+import java. time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -24,254 +29,193 @@ import java.util.zip.ZipOutputStream;
  */
 public class BackupServiceImpl implements BackupService {
 
-    private static final String BACKUP_EXTENSION = ".pmbak";
-    private static final String METADATA_FILE = "backup_metadata.json";
-
     private final DatabaseManager dbManager;
     private final BackupRepository backupRepository;
     private final AESCipher aesCipher;
+    private final Path backupStoragePath;
+    private final Gson gson;
 
-    public BackupServiceImpl(DatabaseManager dbManager, BackupRepository backupRepository) {
+    public BackupServiceImpl(DatabaseManager dbManager, BackupRepository backupRepository, String storagePath) {
         this.dbManager = dbManager;
         this.backupRepository = backupRepository;
-        this.aesCipher = CipherFactory. createAESCipher();
+        this. aesCipher = CipherFactory.createAESCipher();
+        this.backupStoragePath = Paths.get(storagePath, "backups");
+        this.gson = new Gson();
+        initializeStorage();
+    }
+
+    private void initializeStorage() {
+        try {
+            Files.createDirectories(backupStoragePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize backup storage", e);
+        }
     }
 
     @Override
-    public Backup createBackup(File destinationFile, SecretKey masterKey, String description)
-            throws BackupException {
+    public Backup createBackup(SecretKey masterKey, String description) throws BackupException {
         try {
+            // Generate backup filename
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String backupFileName = "passman_backup_" + timestamp + ".pmbak";
+            Path backupFilePath = backupStoragePath. resolve(backupFileName);
+
+            // Get database file
+            File dbFile = new File(dbManager.getDatabasePath());
+
+            // Create encrypted zip backup
+            try (FileOutputStream fos = new FileOutputStream(backupFilePath.toFile());
+                 ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+                // Add database file
+                ZipEntry dbEntry = new ZipEntry("passman. db");
+                zos.putNextEntry(dbEntry);
+
+                byte[] dbData = Files.readAllBytes(dbFile. toPath());
+                byte[] encryptedData = aesCipher.encryptBytes(dbData, masterKey);
+                zos.write(encryptedData);
+                zos.closeEntry();
+
+                // Add metadata
+                BackupMetadata metadata = new BackupMetadata();
+                metadata.timestamp = LocalDateTime.now();
+                metadata.version = "1.0.0";
+                metadata.description = description;
+
+                ZipEntry metaEntry = new ZipEntry("metadata.json");
+                zos. putNextEntry(metaEntry);
+                String metaJson = gson.toJson(metadata);
+                byte[] encryptedMeta = aesCipher. encryptBytes(metaJson. getBytes(), masterKey);
+                zos.write(encryptedMeta);
+                zos. closeEntry();
+            }
+
+            // Calculate checksum
+            byte[] backupData = Files.readAllBytes(backupFilePath);
+            String checksum = calculateSHA256(backupData);
+
             // Create backup metadata
             Backup backup = new Backup();
-            backup.setBackupFileName(destinationFile.getName());
-            backup.setBackupPath(destinationFile.getAbsolutePath());
-            backup. setBackupType(Backup.BackupType.MANUAL);
+            backup.setBackupFileName(backupFileName);
+            backup.setBackupPath(backupFilePath.toString());
+            backup.setFileSize(backupData.length);
+            backup.setChecksum(checksum);
+            backup.setBackupType(Backup.BackupType. MANUAL);
+            backup.setStatus(Backup.BackupStatus.COMPLETED);
             backup.setDescription(description);
             backup.setCreatedAt(LocalDateTime.now());
 
-            // Create temporary directory for backup staging
-            Path tempDir = Files.createTempDirectory("passman_backup_");
-
-            try {
-                // Export database to temp directory
-                File dbFile = new File(dbManager.getDatabasePath());
-                File tempDbFile = tempDir.resolve("passman. db").toFile();
-                Files.copy(dbFile.toPath(), tempDbFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                // Create ZIP archive
-                File tempZipFile = Files.createTempFile("backup_", ".zip").toFile();
-                createZipArchive(tempDir. toFile(), tempZipFile);
-
-                // Read ZIP data
-                byte[] zipData = Files.readAllBytes(tempZipFile.toPath());
-
-                // Encrypt backup
-                byte[] encryptedData = aesCipher.encryptBytes(zipData, masterKey);
-
-                // Calculate checksum
-                String checksum = calculateSHA256(encryptedData);
-                backup.setChecksum(checksum);
-
-                // Write encrypted backup
-                Files.write(destinationFile.toPath(), encryptedData);
-                backup.setFileSize(encryptedData.length);
-
-                // Update status
-                backup.setStatus(Backup.BackupStatus. COMPLETED);
-
-                // Save backup metadata
-                backupRepository.save(backup);
-
-                // Cleanup
-                tempZipFile.delete();
-                deleteDirectory(tempDir. toFile());
-
-                return backup;
-
-            } catch (Exception e) {
-                backup.setStatus(Backup.BackupStatus.FAILED);
-                throw new BackupException("Failed to create backup", e);
-            }
+            return backupRepository.save(backup);
 
         } catch (Exception e) {
-            throw new BackupException("Backup process failed", e);
+            throw new BackupException("Failed to create backup", e);
         }
     }
 
     @Override
     public void restoreBackup(File backupFile, SecretKey masterKey) throws BackupException {
         try {
-            // Verify backup first
+            // Verify backup integrity
             if (!verifyBackup(backupFile)) {
-                throw new BackupException("Backup verification failed");
+                throw new BackupException("Backup file is corrupted");
             }
 
-            // Read encrypted backup
-            byte[] encryptedData = Files.readAllBytes(backupFile.toPath());
+            // Extract and decrypt database
+            try (FileInputStream fis = new FileInputStream(backupFile);
+                 ZipInputStream zis = new ZipInputStream(fis)) {
 
-            // Decrypt backup
-            byte[] zipData = aesCipher. decryptBytes(encryptedData, masterKey);
+                ZipEntry entry;
+                while ((entry = zis.getNextEntry()) != null) {
+                    if ("passman.db".equals(entry.getName())) {
+                        byte[] encryptedData = zis.readAllBytes();
+                        byte[] decryptedData = aesCipher.decryptBytes(encryptedData, masterKey);
 
-            // Extract to temporary directory
-            Path tempDir = Files.createTempDirectory("passman_restore_");
-            File tempZipFile = Files.createTempFile("restore_", ".zip").toFile();
-            Files.write(tempZipFile. toPath(), zipData);
+                        // Close current database connection
+                        dbManager.close();
 
-            try {
-                // Extract ZIP
-                extractZipArchive(tempZipFile, tempDir. toFile());
+                        // Replace database file
+                        File dbFile = new File(dbManager.getDatabasePath());
+                        Files.write(dbFile.toPath(), decryptedData);
 
-                // Close existing database connection
-                dbManager.close();
+                        // Reinitialize database
+                        dbManager.initialize();
 
-                // Restore database
-                File restoredDb = tempDir.resolve("passman.db").toFile();
-                File targetDb = new File(dbManager.getDatabasePath());
-
-                // Backup current database before restore
-                File currentBackup = new File(targetDb.getAbsolutePath() + ".before_restore");
-                Files.copy(targetDb.toPath(), currentBackup.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                // Restore database
-                Files.copy(restoredDb. toPath(), targetDb.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                // Reinitialize database connection
-                dbManager.initialize();
-
-                // Cleanup
-                tempZipFile.delete();
-                deleteDirectory(tempDir.toFile());
-
-            } catch (Exception e) {
-                throw new BackupException("Failed to restore backup", e);
+                        break;
+                    }
+                }
             }
 
         } catch (Exception e) {
-            throw new BackupException("Restore process failed", e);
+            throw new BackupException("Failed to restore backup", e);
         }
     }
 
     @Override
     public boolean verifyBackup(File backupFile) throws BackupException {
         try {
-            if (!backupFile.exists()) {
+            // Check if backup exists in database
+            Optional<Backup> backupOpt = backupRepository.findByFileName(backupFile.getName());
+            if (backupOpt.isEmpty()) {
                 return false;
             }
 
-            // Read file
-            byte[] fileData = Files. readAllBytes(backupFile. toPath());
-
-            // Calculate checksum
-            String actualChecksum = calculateSHA256(fileData);
-
-            // Find backup metadata
-            Backup backup = backupRepository.findByFileName(backupFile.getName())
-                    .orElse(null);
-
-            if (backup == null) {
-                // If no metadata, just check if file is readable
-                return fileData.length > 0;
-            }
-
             // Verify checksum
-            return actualChecksum.equals(backup.getChecksum());
+            byte[] fileData = Files.readAllBytes(backupFile.toPath());
+            String calculatedChecksum = calculateSHA256(fileData);
+
+            return calculatedChecksum.equals(backupOpt.get().getChecksum());
 
         } catch (Exception e) {
-            throw new BackupException("Verification failed", e);
+            throw new BackupException("Failed to verify backup", e);
         }
     }
 
     @Override
-    public List<Backup> listBackups() throws BackupException {
+    public List<Backup> getAllBackups() throws BackupException {
         try {
             return backupRepository.findAll();
         } catch (Exception e) {
-            throw new BackupException("Failed to list backups", e);
+            throw new BackupException("Failed to fetch backups", e);
         }
     }
 
     @Override
     public void deleteBackup(Long backupId) throws BackupException {
         try {
-            Backup backup = backupRepository.findById(backupId)
-                    .orElseThrow(() -> new BackupException("Backup not found"));
+            Optional<Backup> backupOpt = backupRepository.findById(backupId);
+            if (backupOpt.isPresent()) {
+                Backup backup = backupOpt. get();
 
-            // Delete file
-            File backupFile = new File(backup. getBackupPath());
-            if (backupFile.exists()) {
-                Files.delete(backupFile.toPath());
+                // Delete file
+                File backupFile = new File(backup. getBackupPath());
+                Files.deleteIfExists(backupFile.toPath());
+
+                // Delete metadata
+                backupRepository.delete(backupId);
             }
-
-            // Delete metadata
-            backupRepository.delete(backupId);
-
         } catch (Exception e) {
             throw new BackupException("Failed to delete backup", e);
         }
     }
 
     @Override
-    public Backup getBackupInfo(File backupFile) throws BackupException {
+    public BackupStatistics getStatistics() throws BackupException {
         try {
-            Backup backup = new Backup();
-            backup.setBackupFileName(backupFile.getName());
-            backup.setBackupPath(backupFile.getAbsolutePath());
-            backup. setFileSize(backupFile.length());
+            List<Backup> allBackups = backupRepository.findAll();
 
-            byte[] fileData = Files.readAllBytes(backupFile.toPath());
-            backup.setChecksum(calculateSHA256(fileData));
+            BackupStatistics stats = new BackupStatistics();
+            stats.totalBackups = allBackups.size();
+            stats.totalSize = allBackups.stream().mapToLong(Backup:: getFileSize).sum();
 
-            return backup;
+            if (! allBackups.isEmpty()) {
+                stats.latestBackup = allBackups.get(0);
+                stats.oldestBackup = allBackups.get(allBackups.size() - 1);
+            }
+
+            return stats;
+
         } catch (Exception e) {
-            throw new BackupException("Failed to get backup info", e);
-        }
-    }
-
-    // Helper methods
-
-    private void createZipArchive(File sourceDir, File zipFile) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(zipFile);
-             ZipOutputStream zos = new ZipOutputStream(fos)) {
-
-            zipDirectory(sourceDir, sourceDir, zos);
-        }
-    }
-
-    private void zipDirectory(File rootDir, File sourceDir, ZipOutputStream zos) throws IOException {
-        File[] files = sourceDir.listFiles();
-        if (files == null) return;
-
-        for (File file : files) {
-            if (file.isDirectory()) {
-                zipDirectory(rootDir, file, zos);
-            } else {
-                String relativePath = rootDir.toPath().relativize(file.toPath()).toString();
-                ZipEntry entry = new ZipEntry(relativePath);
-                zos.putNextEntry(entry);
-
-                Files.copy(file.toPath(), zos);
-                zos.closeEntry();
-            }
-        }
-    }
-
-    private void extractZipArchive(File zipFile, File destDir) throws IOException {
-        try (FileInputStream fis = new FileInputStream(zipFile);
-             ZipInputStream zis = new ZipInputStream(fis)) {
-
-            ZipEntry entry;
-            while ((entry = zis. getNextEntry()) != null) {
-                File entryFile = new File(destDir, entry.getName());
-
-                if (entry.isDirectory()) {
-                    entryFile.mkdirs();
-                } else {
-                    entryFile.getParentFile().mkdirs();
-                    Files.copy(zis, entryFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                }
-
-                zis.closeEntry();
-            }
+            throw new BackupException("Failed to get statistics", e);
         }
     }
 
@@ -281,19 +225,9 @@ public class BackupServiceImpl implements BackupService {
         return Base64.getEncoder().encodeToString(hash);
     }
 
-    private void deleteDirectory(File directory) {
-        if (directory. exists()) {
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        deleteDirectory(file);
-                    } else {
-                        file.delete();
-                    }
-                }
-            }
-            directory.delete();
-        }
+    private static class BackupMetadata {
+        LocalDateTime timestamp;
+        String version;
+        String description;
     }
 }

@@ -7,38 +7,44 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Service for creating and restoring encrypted backups
+ * Service interface for backup operations
  */
 public interface BackupService {
 
     /**
-     * Creates encrypted backup of all data
+     * Create encrypted backup of entire database
      */
-    Backup createBackup(File destinationFile, SecretKey masterKey, String description)
-            throws BackupException;
+    Backup createBackup(SecretKey masterKey, String description) throws BackupException;
 
     /**
-     * Restores data from encrypted backup
+     * Restore database from backup
      */
     void restoreBackup(File backupFile, SecretKey masterKey) throws BackupException;
 
     /**
-     * Verifies backup integrity
+     * Verify backup integrity
      */
     boolean verifyBackup(File backupFile) throws BackupException;
 
     /**
-     * Lists all available backups
+     * Get all backup metadata
      */
-    List<Backup> listBackups() throws BackupException;
+    List<Backup> getAllBackups() throws BackupException;
 
     /**
-     * Deletes a backup
+     * Delete backup file
      */
     void deleteBackup(Long backupId) throws BackupException;
 
     /**
-     * Gets backup metadata
+     * Get backup statistics
      */
-    Backup getBackupInfo(File backupFile) throws BackupException;
+    BackupStatistics getStatistics() throws BackupException;
+
+    class BackupStatistics {
+        public int totalBackups;
+        public long totalSize;
+        public Backup latestBackup;
+        public Backup oldestBackup;
+    }
 }
