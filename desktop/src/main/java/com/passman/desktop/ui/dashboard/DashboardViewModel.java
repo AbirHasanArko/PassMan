@@ -1,6 +1,6 @@
 package com.passman. desktop.ui.dashboard;
 
-import com.passman.core.models. Credential;
+import com.passman.core.model. Credential;
 import com.passman. core.repository.CredentialRepository;
 import com.passman.core.services.EncryptionService;
 import javafx.beans.property.SimpleStringProperty;

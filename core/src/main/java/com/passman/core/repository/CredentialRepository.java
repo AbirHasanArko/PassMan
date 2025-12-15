@@ -1,6 +1,6 @@
 package com.passman.core.repository;
 
-import com.passman.core.models.Credential;
+import com.passman.core.model.Credential;
 
 import java.util.List;
 import java.util.Optional;

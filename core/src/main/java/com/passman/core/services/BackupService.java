@@ -1,6 +1,6 @@
 package com.passman.core.services;
 
-import com.passman.core.models.Backup;
+import com.passman.core.model.Backup;
 
 import javax.crypto.SecretKey;
 import java.io.File;

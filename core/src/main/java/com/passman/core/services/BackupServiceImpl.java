@@ -3,7 +3,7 @@ package com.passman.core.services;
 import com.passman.core.crypto.AESCipher;
 import com.passman.core.crypto. CipherFactory;
 import com. passman.core.db.DatabaseManager;
-import com.passman. core.models.Backup;
+import com.passman. core.model.Backup;
 import com.passman.core.repository.BackupRepository;
 
 import javax.crypto.SecretKey;
@@ -13,7 +13,6 @@ import java.nio. file.Path;
 import java. nio.file.StandardCopyOption;
 import java. security.MessageDigest;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util. Base64;
 import java.util. List;
 import java.util. zip.ZipEntry;

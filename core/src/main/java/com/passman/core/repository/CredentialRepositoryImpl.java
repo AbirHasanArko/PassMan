@@ -1,7 +1,7 @@
 package com.passman.core.repository;
 
 import com.passman.core.db.DatabaseManager;
-import com.passman.core.models.Credential;
+import com.passman.core.model.Credential;
 
 import java.sql.*;
 import java.time.LocalDateTime;

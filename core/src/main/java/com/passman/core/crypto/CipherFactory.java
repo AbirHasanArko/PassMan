@@ -15,9 +15,6 @@ public class CipherFactory {
         return new PBKDF2KeyDerivation();
     }
 
-    /**
-     * Creates a complete encryption context
-     */
     public static EncryptionContext createEncryptionContext(char[] masterPassword) throws Exception {
         PBKDF2KeyDerivation keyDerivation = createKeyDerivation();
         byte[] salt = keyDerivation. generateSalt();

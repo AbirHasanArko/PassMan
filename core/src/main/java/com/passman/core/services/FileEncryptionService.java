@@ -2,8 +2,8 @@ package com.passman.core.services;
 
 import com.passman.core.crypto.AESCipher;
 import com.passman.core.crypto. CipherFactory;
-import com.passman.core.models.EncryptedFile;
-import com.passman.core.models.FileVault;
+import com.passman.core.model.EncryptedFile;
+import com.passman.core.model.FileVault;
 
 import javax.crypto.SecretKey;
 import java.io.*;

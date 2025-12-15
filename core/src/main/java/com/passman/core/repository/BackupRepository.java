@@ -1,6 +1,6 @@
 package com.passman.core.repository;
 
-import com.passman.core.models.Backup;
+import com.passman.core.model.Backup;
 
 import java.util.List;
 import java.util.Optional;
