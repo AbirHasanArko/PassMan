@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com. passman.desktop.ui.identity.IdentityCardsController"
+            stylesheets="@../styles/main.css">
+
+    <!-- Top Bar -->
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
+                <padding>
+                    <Insets top="10" right="20" bottom="10" left="20"/>
+                </padding>
+
+                <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
+                <Label text="🆔 Identity Cards" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx: id="searchField" promptText="Search cards..." prefWidth="250"/>
+                <Button text="+ Add Card" onAction="#handleAddCard" styleClass="primary-button"/>
+            </HBox>
+
+            <!-- Filter Bar -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="filter-bar">
+                <padding>
+                    <Insets top="5" right="20" bottom="5" left="20"/>
+                </padding>
+
+                <Label text="Filter: "/>
+                <ComboBox fx:id="cardTypeComboBox" promptText="All Types" onAction="#handleFilterByType"/>
+                <Button text="⚠️ Expiring Soon" onAction="#handleShowExpiring" styleClass="warning-button"/>
+                <Button text="❌ Expired" onAction="#handleShowExpired" styleClass="danger-button"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="statsLabel" text="Total:  0 | Expired: 0 | Expiring Soon: 0" styleClass="stats-label"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="cards-scroll-pane">
+            <FlowPane fx:id="cardsFlowPane" hgap="20" vgap="20" styleClass="cards-container">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+            </FlowPane>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

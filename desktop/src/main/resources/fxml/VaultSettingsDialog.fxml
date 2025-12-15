@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene. layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com. passman.desktop.ui.vault.VaultSettingsController"
+            stylesheets="@../styles/main.css">
+
+    <center>
+        <SplitPane dividerPositions="0.3">
+
+            <!-- Vaults List -->
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <Label text="Your Vaults" styleClass="section-label"/>
+                <ListView fx:id="vaultsListView" VBox.vgrow="ALWAYS"/>
+                <Label fx:id="statusLabel" text="0 vaults"/>
+            </VBox>
+
+            <!-- Vault Settings -->
+            <VBox spacing="15">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <Label text="Vault Settings" styleClass="section-label"/>
+
+                <VBox spacing="5">
+                    <Label text="Vault Name:"/>
+                    <TextField fx:id="vaultNameField" promptText="Enter vault name"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Vault Type:"/>
+                    <ComboBox fx:id="vaultTypeCombo" promptText="Select type" maxWidth="Infinity"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Icon Emoji:"/>
+                    <TextField fx:id="iconEmojiField" promptText="e.g., 🔒"/>
+                </VBox>
+
+                <CheckBox fx:id="separatePasswordCheck" text="Use separate password for this vault"/>
+
+                <VBox spacing="5">
+                    <Label text="New Password:"/>
+                    <PasswordField fx:id="newPasswordField"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Confirm Password:"/>
+                    <PasswordField fx:id="confirmPasswordField"/>
+                </VBox>
+
+                <HBox spacing="10">
+                    <Button text="Create Vault" onAction="#handleCreateVault" styleClass="primary-button"/>
+                    <Button text="Set Password" onAction="#handleSetPassword" styleClass="action-button"/>
+                    <Button text="Remove Password" onAction="#handleRemovePassword" styleClass="warning-button"/>
+                </HBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Clear" onAction="#handleClear" styleClass="secondary-button"/>
+                    <Button text="Close" onAction="#handleClose" styleClass="secondary-button"/>
+                </HBox>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+</BorderPane>

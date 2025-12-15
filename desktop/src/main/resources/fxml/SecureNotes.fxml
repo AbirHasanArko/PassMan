@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx. geometry.Insets?>
+<? import javafx.scene.control.*?>
+        <?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com. passman.desktop.ui.notes.SecureNotesController"
+            stylesheets="@../styles/main.css">
+
+    <!-- Top Bar -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
+            <Label text="📝 Secure Notes" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="searchField" promptText="Search notes..." prefWidth="250"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.25">
+
+            <!-- Notes List -->
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button text="+ New Note" onAction="#handleNewNote" styleClass="primary-button"/>
+                    <Button text="⭐ Favorites" onAction="#handleShowFavorites" styleClass="action-button"/>
+                </HBox>
+
+                <ComboBox fx:id="categoryComboBox" promptText="Filter by category..."
+                          onAction="#handleFilterByCategory" maxWidth="Infinity"/>
+
+                <ListView fx:id="notesListView" VBox.vgrow="ALWAYS"/>
+
+                <Label fx:id="statusLabel" text="0 notes" styleClass="status-label"/>
+            </VBox>
+
+            <!-- Note Editor -->
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="titleField" promptText="Note Title" HBox.hgrow="ALWAYS"/>
+                    <ColorPicker fx:id="colorPicker"/>
+                    <CheckBox fx:id="favoriteCheckbox" text="⭐"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <ComboBox fx:id="categoryComboBox" promptText="Category"/>
+                    <TextField fx:id="tagsField" promptText="Tags (comma separated)" HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+                <TextArea fx: id="contentArea" promptText="Write your note here..."
+                          VBox.vgrow="ALWAYS" wrapText="true"/>
+
+                <Separator/>
+
+                <VBox spacing="5">
+                    <Label text="Attachments:"/>
+                    <HBox spacing="10">
+                        <ListView fx:id="attachmentsListView" prefHeight="80" HBox.hgrow="ALWAYS"/>
+                        <VBox spacing="5">
+                            <Button text="+ Add" onAction="#handleAddAttachment" styleClass="small-button"/>
+                            <Button text="⬇ Download" onAction="#handleDownloadAttachment" styleClass="small-button"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Delete" onAction="#handleDeleteNote" styleClass="danger-button"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Save" onAction="#handleSaveNote" styleClass="primary-button"/>
+                </HBox>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+</BorderPane>

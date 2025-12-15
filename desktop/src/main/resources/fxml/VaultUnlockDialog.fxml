@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx. geometry.Insets?>
+<? import javafx.scene.control.*?>
+        <?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns: fx="http://javafx.com/fxml/1"
+      fx:controller="com.passman.desktop.ui.vault. VaultUnlockController"
+      spacing="15" stylesheets="@../styles/main.css">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Unlock Vault" styleClass="dialog-title"/>
+    <Separator/>
+
+    <VBox spacing="5">
+        <Label text="Vault Name:"/>
+        <Label fx:id="vaultNameLabel" text="" styleClass="value-label"/>
+    </VBox>
+
+    <VBox spacing="5">
+        <Label text="Vault Type:"/>
+        <Label fx:id="vaultTypeLabel" text="" styleClass="value-label"/>
+    </VBox>
+
+    <VBox spacing="5">
+        <Label text="Password:"/>
+        <PasswordField fx:id="passwordField" promptText="Enter vault password"/>
+    </VBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#handleCancel" styleClass="secondary-button"/>
+        <Button text="Unlock" onAction="#handleUnlock" styleClass="primary-button"/>
+    </HBox>
+
+</VBox>

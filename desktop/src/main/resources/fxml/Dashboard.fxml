@@ -5,105 +5,92 @@
 <?import javafx.scene. layout.*?>
 
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.passman.desktop.ui.dashboard.DashboardController"
-            styleClass="dashboard-container">
+            stylesheets="@../styles/main.css">
 
+    <!-- Top Bar -->
     <top>
-        <HBox styleClass="toolbar" spacing="10" alignment="CENTER_LEFT">
-            <padding>
-                <Insets top="10" right="15" bottom="10" left="15"/>
-            </padding>
+        <VBox styleClass="top-bar">
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
+                <padding>
+                    <Insets top="15" right="20" bottom="15" left="20"/>
+                </padding>
 
-            <Label text="PassMan" styleClass="toolbar-title"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <TextField fx:id="searchField"
-                       promptText="Search credentials..."
-                       styleClass="search-field"
-                       prefWidth="300"/>
-
-            <Button fx:id="addButton"
-                    text="+ Add"
-                    onAction="#handleAddCredential"
-                    styleClass="primary-button"/>
-
-            <MenuButton text="⋮" styleClass="menu-button">
-                <items>
-                    <MenuItem text="Backup/Restore" onAction="#handleBackup"/>
-                    <MenuItem text="Settings"/>
-                    <SeparatorMenuItem/>
-                    <MenuItem text="Logout" onAction="#handleLogout"/>
-                </items>
-            </MenuButton>
-        </HBox>
-    </top>
-
-    <left>
-        <VBox styleClass="nav-drawer" spacing="5" prefWidth="200">
-            <padding>
-                <Insets top="15" right="10" bottom="15" left="10"/>
-            </padding>
-
-            <Label text="VAULT" styleClass="nav-section-title"/>
-            <Button text="🔐 Passwords" maxWidth="Infinity" styleClass="nav-button"/>
-            <Button text="💳 Cards" maxWidth="Infinity" styleClass="nav-button"/>
-            <Button text="🪪 IDs" maxWidth="Infinity" styleClass="nav-button"/>
-
-            <Separator/>
-
-            <Label text="TOOLS" styleClass="nav-section-title"/>
-            <Button text="🔑 Generator" onAction="#handleGeneratePassword" maxWidth="Infinity" styleClass="nav-button"/>
-            <Button text="📊 Graph" onAction="#handleGraph" maxWidth="Infinity" styleClass="nav-button"/>
-            <Button text="📱 QR Share" onAction="#handleQRShare" maxWidth="Infinity" styleClass="nav-button"/>
-
-            <Separator/>
-
-            <Label text="GAMIFY" styleClass="nav-section-title"/>
-            <Button text="🎯 Quiz" onAction="#handleQuiz" maxWidth="Infinity" styleClass="nav-button"/>
-            <Button text="🏆 Missions" maxWidth="Infinity" styleClass="nav-button"/>
-
-            <Separator/>
-
-            <Button text="👤 Admin" onAction="#handleAdmin" maxWidth="Infinity" styleClass="nav-button"/>
-        </VBox>
-    </left>
-
-    <center>
-        <VBox spacing="15">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-
-            <HBox spacing="15">
-                <VBox styleClass="summary-card" HBox.hgrow="ALWAYS">
-                    <Label text="Total Passwords" styleClass="card-title"/>
-                    <Label text="47" styleClass="card-value"/>
-                </VBox>
-
-                <VBox styleClass="summary-card" HBox.hgrow="ALWAYS">
-                    <Label text="Weak Passwords" styleClass="card-title"/>
-                    <Label text="5" styleClass="card-value-warning"/>
-                </VBox>
-
-                <VBox styleClass="summary-card" HBox.hgrow="ALWAYS">
-                    <Label text="Reused" styleClass="card-title"/>
-                    <Label text="3" styleClass="card-value-danger"/>
-                </VBox>
-
-                <VBox styleClass="summary-card" HBox.hgrow="ALWAYS">
-                    <Label text="Avg Age" styleClass="card-title"/>
-                    <Label text="127 days" styleClass="card-value"/>
-                </VBox>
+                <Label text="🔐 PassMan" styleClass="app-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="welcomeLabel" text="Welcome!" styleClass="welcome-label"/>
+                <Button text="Logout" onAction="#handleLogout" styleClass="logout-button"/>
             </HBox>
 
-            <fx:include source="PasswordTableView.fxml"/>
+            <!-- Search and Actions Bar -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
+                <padding>
+                    <Insets top="10" right="20" bottom="10" left="20"/>
+                </padding>
+
+                <TextField fx:id="searchField" promptText="🔍 Search passwords..."
+                           prefWidth="300" styleClass="search-field"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="addButton" text="➕ Add" onAction="#handleAddCredential" styleClass="action-button"/>
+                <Button text="🎲 Generate" onAction="#handleGeneratePassword" styleClass="action-button"/>
+                <Button text="💾 Backup" onAction="#handleBackup" styleClass="action-button"/>
+            </HBox>
         </VBox>
+    </top>
+
+    <!-- Main Content -->
+    <center>
+        <BorderPane>
+            <!-- Sidebar -->
+            <left>
+                <VBox spacing="5" styleClass="sidebar" prefWidth="200">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+
+                    <Label text="CATEGORIES" styleClass="sidebar-header"/>
+                    <Button text="🏠 All Passwords" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="⭐ Favorites" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="🔒 Passwords" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="📝 Secure Notes" onAction="#handleNotes" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="🆔 Identity Cards" onAction="#handleIdentityCards" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="📁 File Vaults" styleClass="sidebar-button" maxWidth="Infinity"/>
+
+                    <Separator/>
+
+                    <Label text="FEATURES" styleClass="sidebar-header"/>
+                    <Button text="📊 Analytics" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="📈 Graph View" onAction="#handleGraph" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="🎮 Quiz" onAction="#handleQuiz" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="📱 QR Share" onAction="#handleQRShare" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <Button text="⚙️ Admin" onAction="#handleAdmin" styleClass="sidebar-button" maxWidth="Infinity"/>
+                </VBox>
+            </left>
+
+            <!-- Password Table -->
+            <center>
+                <VBox spacing="10">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <Label text="Your Passwords" styleClass="section-title"/>
+
+                    <TableView fx:id="credentialsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="Title" prefWidth="200"/>
+                            <TableColumn text="Username" prefWidth="150"/>
+                            <TableColumn text="URL" prefWidth="200"/>
+                            <TableColumn text="Age" prefWidth="100"/>
+                            <TableColumn text="Strength" prefWidth="100"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </center>
+        </BorderPane>
     </center>
 
 </BorderPane>

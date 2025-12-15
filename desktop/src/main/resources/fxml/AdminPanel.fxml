@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene. layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com. passman.desktop.ui.placeholder.PlaceholderController"
+            stylesheets="@../styles/main.css">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
+            <Label fx:id="titleLabel" text="Feature" styleClass="page-title"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="20">
+            <Label text="🚧" style="-fx-font-size:  72px;"/>
+            <Label fx:id="messageLabel" text="This feature is coming soon!" styleClass="placeholder-message"/>
+        </VBox>
+    </center>
+
+</BorderPane>

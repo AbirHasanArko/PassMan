@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry. Insets?>
+<?import javafx.scene.control.*?>
+<? import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx: controller="com.passman.desktop.ui.backup.BackupController"
+            stylesheets="@../styles/main.css">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
+            <Label text="💾 Backup & Restore" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statsLabel" text="Total: 0 backups"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.4">
+
+            <!-- Backups List -->
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <Label text="Available Backups" styleClass="section-label"/>
+                <ListView fx:id="backupsListView" VBox.vgrow="ALWAYS"/>
+                <Label fx:id="statusLabel" text="0 backups available"/>
+            </VBox>
+
+            <!-- Backup Details -->
+            <VBox spacing="15">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <Label text="Backup Description" styleClass="section-label"/>
+                <TextArea fx:id="descriptionArea" editable="false" prefRowCount="5"/>
+
+                <Separator/>
+
+                <ProgressIndicator fx:id="progressIndicator" prefWidth="50" prefHeight="50" visible="false"/>
+
+                <VBox spacing="10">
+                    <Button fx:id="createBackupButton" text="📦 Create New Backup"
+                            onAction="#handleCreateBackup" styleClass="primary-button" maxWidth="Infinity"/>
+                    <Button fx:id="restoreButton" text="↩️ Restore from Backup"
+                            onAction="#handleRestore" styleClass="action-button" maxWidth="Infinity" disable="true"/>
+                    <Button text="📤 Export Backup" onAction="#handleExport"
+                            styleClass="action-button" maxWidth="Infinity"/>
+                    <Button text="📥 Import Backup" onAction="#handleImport"
+                            styleClass="action-button" maxWidth="Infinity"/>
+                    <Button fx:id="deleteButton" text="🗑️ Delete Backup"
+                            onAction="#handleDelete" styleClass="danger-button" maxWidth="Infinity" disable="true"/>
+                </VBox>
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+</BorderPane>
