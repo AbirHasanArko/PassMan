@@ -1,3 +1,5 @@
+import java.time.LocalDateTime
+
 plugins {
     java
 }
@@ -14,7 +16,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     // SQLite JDBC driver
-    implementation("org. xerial:sqlite-jdbc:3.45.0. 0")
+    implementation("org.xerial:sqlite-jdbc:3.45.0.0")
 
     // Testing
     testImplementation(platform("org.junit:junit-bom:5.10.1"))
@@ -53,10 +55,10 @@ java {
 }
 
 // Custom task to run specific test
-tasks.register("testCrypto", Test:: class) {
+tasks.register("testCrypto", Test::class) {
     useJUnitPlatform()
     filter {
-        includeTestsMatching("com.passman.core. crypto.*")
+        includeTestsMatching("com.passman.core.crypto.*")
     }
 }
 
@@ -86,16 +88,13 @@ tasks.jacocoTestReport {
 // Generate build info
 tasks.register("buildInfo") {
     doLast {
-        val buildInfo = """
-            |=====================================
-            |  PassMan Core Module
-            |=====================================
-            |  Version: ${project.version}
-            |  Java Version: ${java.sourceCompatibility}
-            |  Build Time: ${java.time.LocalDateTime.now()}
-            |=====================================
-        """.trimMargin()
-        println(buildInfo)
+        println("=====================================")
+        println("  PassMan Core Module")
+        println("=====================================")
+        println("  Version: ${project.version}")
+        println("  Java Version: ${java.sourceCompatibility}")
+        println("  Build Time: ${LocalDateTime.now()}")
+        println("=====================================")
     }
 }
 

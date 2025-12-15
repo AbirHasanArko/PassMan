@@ -103,26 +103,37 @@ public class DatabaseManager {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                line = line.trim();
+                line = line. trim();
 
+                // Skip empty lines and comments
                 if (line.isEmpty() || line.startsWith("--")) {
                     continue;
                 }
 
                 sql.append(line).append(" ");
 
+                // Execute when we find a semicolon
                 if (line.endsWith(";")) {
-                    String sqlStatement = sql.toString();
-                    try (Statement stmt = connection.createStatement()) {
-                        stmt.execute(sqlStatement);
-                    } catch (SQLException e) {
-                        if (e.getMessage().contains("already exists") ||
-                                e.getMessage().contains("duplicate column")) {
-                            System.out.println("⚠️ Skipping:  " + e.getMessage());
-                        } else {
-                            throw e;
+                    String sqlStatement = sql.toString().trim();
+
+                    if (! sqlStatement.isEmpty()) {
+                        try (Statement stmt = connection. createStatement()) {
+                            stmt.execute(sqlStatement);
+                            System.out.println("   Executed: " + sqlStatement. substring(0, Math.min(50, sqlStatement.length())) + "...");
+                        } catch (SQLException e) {
+                            // Only skip if table/column already exists
+                            if (e. getMessage().contains("already exists") ||
+                                    e.getMessage().contains("duplicate column") ||
+                                    e. getMessage().contains("duplicate table")) {
+                                System.out.println("⚠️ Skipping:  " + e.getMessage());
+                            } else {
+                                System.err.println("❌ Failed to execute:  " + sqlStatement);
+                                throw e;
+                            }
                         }
                     }
+
+                    // Reset for next statement
                     sql.setLength(0);
                 }
             }
@@ -206,8 +217,13 @@ public class DatabaseManager {
     }
 
     public void rollback() throws SQLException {
-        connection. rollback();
-        connection.setAutoCommit(true);
+        if (connection != null && !connection.isClosed() && ! connection.getAutoCommit()) {
+            try {
+                connection.rollback();
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        }
     }
 
     public DatabaseStatistics getStatistics() throws SQLException {
