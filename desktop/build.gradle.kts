@@ -8,10 +8,6 @@ plugins {
 group = "com.passman"
 version = "1.0.0"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":core"))
 
