@@ -10,53 +10,89 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Manages scene transitions and caching.
+ * Manages scene navigation and loading
  */
 public class SceneManager {
 
-    private final Stage stage;
-    private final Map<String, Scene> sceneCache;
+    private final Stage primaryStage;
+    private final Map<String, String> sceneMap;
+    private Scene currentScene;
 
-    public SceneManager(Stage stage) {
-        this.stage = stage;
-        this.sceneCache = new HashMap<>();
+    public SceneManager(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        this.sceneMap = new HashMap<>();
+        initializeSceneMap();
     }
 
+    private void initializeSceneMap() {
+        sceneMap. put("Login", "/fxml/Login.fxml");
+        sceneMap.put("Dashboard", "/fxml/Dashboard.fxml");
+        sceneMap.put("SecureNotes", "/fxml/SecureNotes.fxml");
+        sceneMap.put("IdentityCards", "/fxml/IdentityCards.fxml");
+        sceneMap.put("BackupRestoreView", "/fxml/BackupRestoreView.fxml");
+        sceneMap.put("QRShareView", "/fxml/QRShareView.fxml");
+        sceneMap.put("GraphView", "/fxml/GraphView. fxml");
+        sceneMap.put("QuizView", "/fxml/QuizView.fxml");
+        sceneMap.put("AdminPanel", "/fxml/AdminPanel. fxml");
+    }
+
+    /**
+     * Switch to a different scene
+     */
     public void switchScene(String sceneName) {
         try {
-            Scene scene = sceneCache.get(sceneName);
-
-            if (scene == null) {
-                scene = loadScene(sceneName);
-                sceneCache.put(sceneName, scene);
+            String fxmlPath = sceneMap.get(sceneName);
+            if (fxmlPath == null) {
+                throw new IllegalArgumentException("Scene not found: " + sceneName);
             }
 
-            stage.setScene(scene);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+
+            // Apply CSS
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
+
+            currentScene = scene;
+            primaryStage.setScene(scene);
+
+            System.out.println("✅ Switched to scene: " + sceneName);
+
         } catch (IOException e) {
-            System.err.println("Failed to load scene: " + sceneName);
+            System.err.println("❌ Failed to load scene: " + sceneName);
             e.printStackTrace();
+            DialogUtils.showError("Navigation Error", "Failed to load screen", e.getMessage());
         }
     }
 
-    private Scene loadScene(String sceneName) throws IOException {
-        String fxmlPath = "/fxml/" + sceneName + ".fxml";
+    /**
+     * Get current scene
+     */
+    public Scene getCurrentScene() {
+        return currentScene;
+    }
+
+    /**
+     * Get primary stage
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    /**
+     * Load FXML and return root node
+     */
+    public Parent loadFXML(String fxmlPath) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-        Parent root = loader.load();
-
-        Scene scene = new Scene(root);
-
-        // Load CSS
-        String css = getClass().getResource("/styles/main.css").toExternalForm();
-        scene.getStylesheets().add(css);
-
-        return scene;
+        return loader.load();
     }
 
-    public void clearCache() {
-        sceneCache.clear();
-    }
-
-    public Stage getStage() {
-        return stage;
+    /**
+     * Load FXML with controller
+     */
+    public <T> T loadFXMLWithController(String fxmlPath) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        loader.load();
+        return loader.getController();
     }
 }
