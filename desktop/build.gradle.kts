@@ -129,7 +129,7 @@ tasks.register("dev") {
 idea {
     module {
         inheritOutputDirs = false
-        outputDir = file("$buildDir/classes/java/main")
-        testOutputDir = file("$buildDir/classes/java/test")
+        outputDir = layout.buildDirectory.dir("classes/java/main").get().asFile
+        testOutputDir = layout.buildDirectory.dir("classes/java/test").get().asFile
     }
 }

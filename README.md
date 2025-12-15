@@ -479,8 +479,6 @@ When running the desktop application from IntelliJ IDEA:
 
 > **Note**: If you see `ClassNotFoundException: javafx.scene.text.Font`, this means IntelliJ's run configuration is not properly configured for JavaFX modules. Follow steps 1-3 above to resolve.
 
-```
-
 ### Android Application
 
 ```bash
