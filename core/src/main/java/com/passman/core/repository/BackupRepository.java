@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository for backup metadata
+ * Repository interface for backup metadata
  */
 public interface BackupRepository {
 

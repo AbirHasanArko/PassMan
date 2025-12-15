@@ -5,9 +5,9 @@ import com.passman.core.model.Credential;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java. util. ArrayList;
-import java.util. List;
-import java.util. Optional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * SQLite implementation of credential repository
@@ -33,7 +33,7 @@ public class CredentialRepositoryImpl implements CredentialRepository {
 
             stmt.setString(1, credential.getTitle());
             stmt.setString(2, credential.getUsername());
-            stmt.setString(3, credential.getEmail());
+            stmt.setString(3, credential. getEmail());
             stmt.setString(4, credential.getUrl());
             stmt.setBytes(5, credential.getEncryptedPassword());
             stmt.setBytes(6, credential.getEncryptionIV());
@@ -45,7 +45,7 @@ public class CredentialRepositoryImpl implements CredentialRepository {
 
             stmt.executeUpdate();
 
-            try (ResultSet rs = stmt. getGeneratedKeys()) {
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     credential.setId(rs.getLong(1));
                 }
@@ -67,7 +67,7 @@ public class CredentialRepositoryImpl implements CredentialRepository {
             stmt.setLong(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
+                if (rs. next()) {
                     return Optional.of(mapResultSetToCredential(rs));
                 }
             }
@@ -83,7 +83,7 @@ public class CredentialRepositoryImpl implements CredentialRepository {
         String sql = "SELECT * FROM credentials ORDER BY last_modified DESC";
         List<Credential> credentials = new ArrayList<>();
 
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dbManager. getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -111,7 +111,7 @@ public class CredentialRepositoryImpl implements CredentialRepository {
         String searchPattern = "%" + query + "%";
 
         try (Connection conn = dbManager.getConnection();
-             PreparedStatement stmt = conn. prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, searchPattern);
             stmt.setString(2, searchPattern);
@@ -154,26 +154,26 @@ public class CredentialRepositoryImpl implements CredentialRepository {
             UPDATE credentials 
             SET title = ?, username = ?, email = ?, url = ?, 
                 encrypted_password = ?, encryption_iv = ?, notes = ?, 
-                tags = ?, is_favorite = ?, last_modified = ?
-            WHERE id = ? 
+                tags = ?, is_favorite = ?, last_modified = ? 
+            WHERE id = ?  
             """;
 
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dbManager. getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt. setString(1, credential.getTitle());
+            stmt.setString(1, credential. getTitle());
             stmt.setString(2, credential.getUsername());
             stmt.setString(3, credential.getEmail());
             stmt.setString(4, credential.getUrl());
-            stmt.setBytes(5, credential.getEncryptedPassword());
-            stmt.setBytes(6, credential. getEncryptionIV());
+            stmt.setBytes(5, credential. getEncryptedPassword());
+            stmt.setBytes(6, credential.getEncryptionIV());
             stmt.setString(7, credential.getNotes());
-            stmt.setString(8, credential. getTags());
-            stmt.setBoolean(9, credential.isFavorite());
+            stmt.setString(8, credential.getTags());
+            stmt.setBoolean(9, credential. isFavorite());
             stmt.setObject(10, LocalDateTime.now());
-            stmt.setLong(11, credential. getId());
+            stmt.setLong(11, credential.getId());
 
-            stmt. executeUpdate();
+            stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RepositoryException("Failed to update credential", e);
         }
@@ -183,7 +183,7 @@ public class CredentialRepositoryImpl implements CredentialRepository {
     public void delete(Long id) throws RepositoryException {
         String sql = "DELETE FROM credentials WHERE id = ?";
 
-        try (Connection conn = dbManager.getConnection();
+        try (Connection conn = dbManager. getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
@@ -199,7 +199,7 @@ public class CredentialRepositoryImpl implements CredentialRepository {
 
         try (Connection conn = dbManager.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt. executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             if (rs.next()) {
                 return rs.getInt(1);

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository for credential CRUD operations
+ * Repository interface for credential operations
  */
 public interface CredentialRepository {
 
