@@ -7,10 +7,6 @@ plugins {
 group = "com.passman"
 version = "1.0.0"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     // JSON processing (for identity cards and backup metadata)
     implementation("com.google.code.gson:gson:2.10.1")
