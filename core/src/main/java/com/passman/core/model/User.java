@@ -3,7 +3,7 @@ package com.passman.core.model;
 import java.time.LocalDateTime;
 
 /**
- * Domain model for master user.
+ * Domain model for master user
  */
 public class User {
     private Long id;
@@ -18,8 +18,8 @@ public class User {
 
     public User(String username, byte[] salt, byte[] hashedPassword) {
         this.username = username;
-        this.salt = salt;
-        this.hashedPassword = hashedPassword;
+        this. salt = salt;
+        this. hashedPassword = hashedPassword;
         this.createdAt = LocalDateTime.now();
     }
 

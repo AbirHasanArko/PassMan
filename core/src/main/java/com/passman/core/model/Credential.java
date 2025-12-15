@@ -3,7 +3,7 @@ package com.passman.core.model;
 import java.time.LocalDateTime;
 
 /**
- * Domain model for password credential entries.
+ * Domain model for password credential entries
  */
 public class Credential {
     private Long id;
@@ -18,10 +18,16 @@ public class Credential {
     private boolean isFavorite;
     private LocalDateTime createdAt;
     private LocalDateTime lastModified;
+    private LocalDateTime passwordChangedAt;
+    private Integer passwordStrengthScore;
+    private boolean isBreached;
 
     public Credential() {
         this.createdAt = LocalDateTime.now();
-        this.lastModified = LocalDateTime. now();
+        this.lastModified = LocalDateTime.now();
+        this.passwordChangedAt = LocalDateTime.now();
+        this.passwordStrengthScore = 0;
+        this.isBreached = false;
     }
 
     // Getters and Setters
@@ -60,4 +66,13 @@ public class Credential {
 
     public LocalDateTime getLastModified() { return lastModified; }
     public void setLastModified(LocalDateTime lastModified) { this.lastModified = lastModified; }
+
+    public LocalDateTime getPasswordChangedAt() { return passwordChangedAt; }
+    public void setPasswordChangedAt(LocalDateTime passwordChangedAt) { this.passwordChangedAt = passwordChangedAt; }
+
+    public Integer getPasswordStrengthScore() { return passwordStrengthScore; }
+    public void setPasswordStrengthScore(Integer passwordStrengthScore) { this.passwordStrengthScore = passwordStrengthScore; }
+
+    public boolean isBreached() { return isBreached; }
+    public void setBreached(boolean breached) { isBreached = breached; }
 }
