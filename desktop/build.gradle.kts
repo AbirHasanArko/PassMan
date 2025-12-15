@@ -2,6 +2,7 @@ import java.time.LocalDateTime
 
 plugins {
     application
+    idea
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
@@ -122,4 +123,13 @@ tasks.register("dev") {
     description = "Run application in development mode"
     dependsOn("classes")
     finalizedBy("run")
+}
+
+// Configure IntelliJ IDEA to properly handle JavaFX modules
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/java/main")
+        testOutputDir = file("$buildDir/classes/java/test")
+    }
 }
