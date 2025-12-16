@@ -3,11 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text. Font?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com. passman.desktop.ui.login.LoginController"
-            stylesheets="@../styles/main.css" styleClass="root">
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.passman.desktop.ui.login.LoginController"
+            stylesheets="@/styles/main.css"
+            styleClass="root">
 
     <center>
         <VBox alignment="CENTER" spacing="20" maxWidth="400">
@@ -15,7 +17,6 @@
                 <Insets top="50" right="50" bottom="50" left="50"/>
             </padding>
 
-            <!-- Logo/Title -->
             <Label text="🔐 PassMan" styleClass="title">
                 <font>
                     <Font name="System Bold" size="36"/>
@@ -30,29 +31,38 @@
 
             <Separator/>
 
-            <!-- Master Password Field -->
             <VBox spacing="10">
-                <Label text="Master Password: "/>
-                <PasswordField fx:id="masterPasswordField" promptText="Enter your master password"/>
+                <Label text="Master Password:"/>
+                <PasswordField fx:id="masterPasswordField"
+                               promptText="Enter your master password"/>
             </VBox>
 
-            <!-- Error Label -->
-            <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"/>
+            <Label fx:id="errorLabel"
+                   styleClass="error-label"
+                   wrapText="true"/>
 
-            <!-- Progress Indicator -->
-            <ProgressIndicator fx:id="progressIndicator" prefWidth="50" prefHeight="50"/>
+            <ProgressIndicator fx:id="progressIndicator"
+                               prefWidth="50"
+                               prefHeight="50"
+                               visible="false"
+                               managed="false"/>
 
-            <!-- Buttons -->
             <HBox spacing="10" alignment="CENTER">
-                <Button fx:id="loginButton" text="Unlock Vault" onAction="#handleLogin"
-                        styleClass="primary-button" prefWidth="150"/>
-                <Button fx:id="createVaultButton" text="Create Vault" onAction="#handleCreateVault"
-                        styleClass="secondary-button" prefWidth="150"/>
+                <Button fx:id="loginButton"
+                        text="Unlock Vault"
+                        onAction="#handleLogin"
+                        styleClass="primary-button"
+                        prefWidth="150"/>
+                <Button fx:id="createVaultButton"
+                        text="Create Vault"
+                        onAction="#handleCreateVault"
+                        styleClass="secondary-button"
+                        prefWidth="150"/>
             </HBox>
 
-            <!-- Forgot Password Link -->
-            <Hyperlink text="Forgot Password?" onAction="#handleForgotPassword" styleClass="link"/>
-
+            <Hyperlink text="Forgot Password?"
+                       onAction="#handleForgotPassword"
+                       styleClass="link"/>
         </VBox>
     </center>
 

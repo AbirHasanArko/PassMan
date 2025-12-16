@@ -2,10 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene. layout.*?>
+<?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com. passman.desktop.ui.vault.VaultSettingsController"
+            fx:controller="com.passman.desktop.ui.vault.VaultSettingsController"
             stylesheets="@../styles/main.css">
 
     <center>

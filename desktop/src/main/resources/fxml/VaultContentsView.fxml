@@ -4,9 +4,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx. com/javafx"
-            xmlns:fx="http://javafx. com/fxml"
-            fx:controller="com.passman.desktop.ui.vaults.VaultContentsController"
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.passman.desktop.ui.vault.VaultContentsController"
             style="-fx-background-color: #f8fafc;">
 
     <top>
@@ -36,6 +36,9 @@
                     <TableColumn fx:id="dateColumn" text="Upload Date" prefWidth="150"/>
                     <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="250"/>
                 </columns>
+                <placeholder>
+                    <Label text="No files uploaded yet."/>
+                </placeholder>
             </TableView>
         </VBox>
     </center>

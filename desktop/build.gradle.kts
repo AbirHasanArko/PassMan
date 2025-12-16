@@ -23,7 +23,8 @@ javafx {
         "javafx.controls",
         "javafx.fxml",
         "javafx.graphics",
-        "javafx.base"
+        "javafx.base",
+        "javafx.web"  // Added - contains javafx.scene.text.Font and other text components
     )
 }
 
@@ -33,7 +34,9 @@ application {
     applicationDefaultJvmArgs = listOf(
         "-Xmx512m",
         "-Xms256m",
-        "--add-exports", "javafx.base/com.sun.javafx.event=ALL-UNNAMED"
+        "--add-exports", "javafx.base/com.sun.javafx.event=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/javafx.scene.text=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/com.sun.javafx.scene.text=ALL-UNNAMED"
     )
 }
 
@@ -63,7 +66,8 @@ tasks.register<JavaExec>("runDebug") {
     jvmArgs = listOf(
         "-Xmx512m",
         "-Djavafx.verbose=true",
-        "-Dprism.verbose=true"
+        "-Dprism.verbose=true",
+        "--add-opens", "javafx.graphics/javafx.scene.text=ALL-UNNAMED"
     )
 }
 

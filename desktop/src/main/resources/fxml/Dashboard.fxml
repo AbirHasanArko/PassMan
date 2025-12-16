@@ -2,12 +2,12 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene. layout.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.layout.BorderPane?>
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.passman.desktop.ui.dashboard.DashboardController"
-            stylesheets="@../styles/main.css">
+            stylesheets="@/styles/main.css">
 
     <!-- Top Bar -->
     <top>
@@ -23,20 +23,27 @@
                 <Button text="Logout" onAction="#handleLogout" styleClass="logout-button"/>
             </HBox>
 
-            <!-- Search and Actions Bar -->
             <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
                 <padding>
                     <Insets top="10" right="20" bottom="10" left="20"/>
                 </padding>
 
-                <TextField fx:id="searchField" promptText="🔍 Search passwords..."
-                           prefWidth="300" styleClass="search-field"/>
+                <TextField fx:id="searchField"
+                           promptText="🔍 Search passwords..."
+                           prefWidth="300"
+                           styleClass="search-field"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <Button fx:id="addButton" text="➕ Add" onAction="#handleAddCredential" styleClass="action-button"/>
-                <Button text="🎲 Generate" onAction="#handleGeneratePassword" styleClass="action-button"/>
-                <Button text="💾 Backup" onAction="#handleBackup" styleClass="action-button"/>
+                <Button fx:id="addButton" text="➕ Add"
+                        onAction="#handleAddCredential"
+                        styleClass="action-button"/>
+                <Button text="🎲 Generate"
+                        onAction="#handleGeneratePassword"
+                        styleClass="action-button"/>
+                <Button text="💾 Backup"
+                        onAction="#handleBackup"
+                        styleClass="action-button"/>
             </HBox>
         </VBox>
     </top>
@@ -44,7 +51,6 @@
     <!-- Main Content -->
     <center>
         <BorderPane>
-            <!-- Sidebar -->
             <left>
                 <VBox spacing="5" styleClass="sidebar" prefWidth="200">
                     <padding>
@@ -70,7 +76,6 @@
                 </VBox>
             </left>
 
-            <!-- Password Table -->
             <center>
                 <VBox spacing="10">
                     <padding>
