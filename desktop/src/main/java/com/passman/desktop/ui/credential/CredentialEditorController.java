@@ -81,8 +81,15 @@ public class CredentialEditorController {
             favoriteCheckbox.setSelected(credential.isFavorite());
 
             try {
+                byte[] iv = credential.getEncryptionIV();
+                byte[] encrypted = credential.getEncryptedPassword();
+                byte[] combined = new byte[iv.length + encrypted.length];
+                System.arraycopy(iv, 0, combined, 0, iv.length);
+                System.arraycopy(encrypted, 0, combined, iv.length, encrypted.length);
+                String base64 = java.util.Base64.getEncoder().encodeToString(combined);
+
                 String decrypted = encryptionService.decryptPassword(
-                        new String(credential.getEncryptedPassword()),
+                        base64,
                         SessionManager.getInstance().getMasterKey()
                 );
                 passwordField.setText(decrypted);
@@ -153,16 +160,9 @@ public class CredentialEditorController {
        ======================= */
     @FXML
     private void handleSave() {
-        String password = passwordVisible
-                ? passwordTextField.getText()
-                : passwordField.getText();
-
-        if (titleField.getText().isEmpty() || password.isEmpty()) {
-            DialogUtils.showWarning(
-                    "Validation Error",
-                    "Required Fields",
-                    "Title and Password are required."
-            );
+        if (titleField.getText().isEmpty() || passwordField.getText().isEmpty()) {
+            DialogUtils.showWarning("Validation Error", "Required Fields",
+                    "Title and Password are required.");
             return;
         }
 
@@ -180,26 +180,38 @@ public class CredentialEditorController {
             credential.setFavorite(favoriteCheckbox.isSelected());
             credential.setLastModified(LocalDateTime.now());
 
+            // Get the currently visible password value:
+            String password = passwordVisible ? passwordTextField.getText() : passwordField.getText();
+
+// Save password strength based on the actual password being saved:
+            credential.setPasswordStrengthScore(calculatePasswordStrengthScore(password));
+
+// Encrypt password and store both IV and encrypted data
             String encrypted = encryptionService.encryptPassword(
                     password,
                     SessionManager.getInstance().getMasterKey()
             );
-            credential.setEncryptedPassword(encrypted.getBytes());
+            byte[] combined = java.util.Base64.getDecoder().decode(encrypted);
+            byte[] iv = new byte[16];
+            System.arraycopy(combined, 0, iv, 0, 16);
+            byte[] encryptedPassword = new byte[combined.length - 16];
+            System.arraycopy(combined, 16, encryptedPassword, 0, encryptedPassword.length);
+
+            credential.setEncryptionIV(iv);
+            credential.setEncryptedPassword(encryptedPassword);
 
             if (credential.getId() == null) {
+                // System.out.println("DEBUG - About to save credential: title=" + credential.getTitle() + " score=" + credential.getPasswordStrengthScore());
                 repository.save(credential);
             } else {
+                // System.out.println("DEBUG - About to update credential: title=" + credential.getTitle() + " score=" + credential.getPasswordStrengthScore());
                 repository.update(credential);
             }
 
             handleCancel();
 
         } catch (Exception e) {
-            DialogUtils.showError(
-                    "Error",
-                    "Failed to save credential",
-                    e.getMessage()
-            );
+            DialogUtils.showError("Error", "Failed to save credential", e.getMessage());
         }
     }
 
@@ -240,5 +252,18 @@ public class CredentialEditorController {
             strengthLabel.setText("Weak");
             strengthLabel.setStyle("-fx-text-fill: #dc3545;");
         }
+    }
+
+    private int calculatePasswordStrengthScore(String password) {
+        if (password == null || password.isEmpty()) return 0;
+
+        int score = 0;
+        if (password.length() >= 8) score += 25;
+        if (password.length() >= 12) score += 25;
+        if (password.matches(".*[A-Z].*")) score += 15;
+        if (password.matches(".*[a-z].*")) score += 15;
+        if (password.matches(".*[0-9].*")) score += 10;
+        if (password.matches(".*[!@#$%^&*].*")) score += 10;
+        return score;
     }
 }

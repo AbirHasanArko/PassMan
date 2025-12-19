@@ -23,17 +23,19 @@ public class CredentialRepositoryImpl implements CredentialRepository {
     @Override
     public Credential save(Credential credential) throws RepositoryException {
         String sql = """
-            INSERT INTO credentials (title, username, email, url, encrypted_password, 
-                                    encryption_iv, notes, tags, is_favorite, created_at, last_modified)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """;
+        INSERT INTO credentials (
+            title, username, email, url, encrypted_password, 
+            encryption_iv, notes, tags, is_favorite, created_at, last_modified,
+            password_changed_at, password_strength_score, is_breached
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
 
         try (Connection conn = dbManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, credential.getTitle());
             stmt.setString(2, credential.getUsername());
-            stmt.setString(3, credential. getEmail());
+            stmt.setString(3, credential.getEmail());
             stmt.setString(4, credential.getUrl());
             stmt.setBytes(5, credential.getEncryptedPassword());
             stmt.setBytes(6, credential.getEncryptionIV());
@@ -42,6 +44,9 @@ public class CredentialRepositoryImpl implements CredentialRepository {
             stmt.setBoolean(9, credential.isFavorite());
             stmt.setObject(10, credential.getCreatedAt());
             stmt.setObject(11, credential.getLastModified());
+            stmt.setObject(12, credential.getPasswordChangedAt());
+            stmt.setInt(13, credential.getPasswordStrengthScore());
+            stmt.setBoolean(14, credential.isBreached());
 
             stmt.executeUpdate();
 
@@ -151,27 +156,31 @@ public class CredentialRepositoryImpl implements CredentialRepository {
     @Override
     public void update(Credential credential) throws RepositoryException {
         String sql = """
-            UPDATE credentials 
-            SET title = ?, username = ?, email = ?, url = ?, 
-                encrypted_password = ?, encryption_iv = ?, notes = ?, 
-                tags = ?, is_favorite = ?, last_modified = ? 
-            WHERE id = ?  
-            """;
+        UPDATE credentials 
+        SET title = ?, username = ?, email = ?, url = ?, 
+            encrypted_password = ?, encryption_iv = ?, notes = ?, 
+            tags = ?, is_favorite = ?, last_modified = ?, 
+            password_changed_at = ?, password_strength_score = ?, is_breached = ?
+        WHERE id = ?
+        """;
 
-        try (Connection conn = dbManager. getConnection();
+        try (Connection conn = dbManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, credential. getTitle());
+            stmt.setString(1, credential.getTitle());
             stmt.setString(2, credential.getUsername());
             stmt.setString(3, credential.getEmail());
             stmt.setString(4, credential.getUrl());
-            stmt.setBytes(5, credential. getEncryptedPassword());
+            stmt.setBytes(5, credential.getEncryptedPassword());
             stmt.setBytes(6, credential.getEncryptionIV());
             stmt.setString(7, credential.getNotes());
             stmt.setString(8, credential.getTags());
-            stmt.setBoolean(9, credential. isFavorite());
+            stmt.setBoolean(9, credential.isFavorite());
             stmt.setObject(10, LocalDateTime.now());
-            stmt.setLong(11, credential.getId());
+            stmt.setObject(11, credential.getPasswordChangedAt());
+            stmt.setInt(12, credential.getPasswordStrengthScore());
+            stmt.setBoolean(13, credential.isBreached());
+            stmt.setLong(14, credential.getId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -224,6 +233,11 @@ public class CredentialRepositoryImpl implements CredentialRepository {
         credential.setFavorite(rs.getBoolean("is_favorite"));
         credential.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
         credential.setLastModified(rs.getObject("last_modified", LocalDateTime.class));
+
+        credential.setPasswordChangedAt(rs.getObject("password_changed_at", LocalDateTime.class));
+        credential.setPasswordStrengthScore(rs.getInt("password_strength_score"));
+        credential.setBreached(rs.getBoolean("is_breached"));
+
         return credential;
     }
 }

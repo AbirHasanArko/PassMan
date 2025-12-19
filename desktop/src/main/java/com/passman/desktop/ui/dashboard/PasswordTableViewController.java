@@ -33,9 +33,9 @@ public class PasswordTableViewController {
     public void initialize() {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
-        urlColumn. setCellValueFactory(new PropertyValueFactory<>("url"));
+        urlColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
         ageColumn.setCellValueFactory(new PropertyValueFactory<>("ageBadge"));
-        strengthColumn. setCellValueFactory(new PropertyValueFactory<>("strength"));
+        strengthColumn.setCellValueFactory(new PropertyValueFactory<>("strength"));
     }
 
     public void setItems(ObservableList<DashboardViewModel.CredentialItem> items) {

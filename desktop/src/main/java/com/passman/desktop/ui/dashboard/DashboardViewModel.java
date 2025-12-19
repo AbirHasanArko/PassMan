@@ -1,13 +1,13 @@
 package com.passman.desktop.ui.dashboard;
 
 import com.passman.core.db.DatabaseManager;
-import com. passman.core.model.Credential;
-import com. passman.core.repository.CredentialRepository;
+import com.passman.core.model.Credential;
+import com.passman.core.repository.CredentialRepository;
 import com.passman.core.repository.CredentialRepositoryImpl;
 import javafx.beans.property.SimpleStringProperty;
-import javafx. beans.property.StringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx. collections.ObservableList;
+import javafx.collections.ObservableList;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
@@ -93,10 +93,10 @@ public class DashboardViewModel {
     }
 
     private String calculateStrength(Credential cred) {
-        int length = cred.getEncryptedPassword().length;
-        if (length > 50) return "Strong";
-        if (length > 30) return "Medium";
-        return "Weak";
+        int score = cred.getPasswordStrengthScore();
+        if (score >= 75) return "Strong";
+        else if (score >= 50) return "Medium";
+        else return "Weak";
     }
 
     public StringProperty searchQueryProperty() {

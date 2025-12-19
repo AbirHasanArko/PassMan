@@ -63,7 +63,7 @@ public class DashboardController {
         setupTableColumns();
 
         // ✅ ADD THIS: Add row selection listener
-        credentialsTable. getSelectionModel().selectedItemProperty().addListener(
+        credentialsTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
                     if (newSelection != null) {
                         handleCredentialSelected(newSelection);
@@ -315,15 +315,22 @@ public class DashboardController {
     private void handleCopyPassword(DashboardViewModel.CredentialItem item) {
         try {
             CredentialRepositoryImpl repository = new CredentialRepositoryImpl(DatabaseManager.getInstance());
-            Optional<Credential> credentialOpt = repository.findById(item. getId());
+            Optional<Credential> credentialOpt = repository.findById(item.getId());
 
             if (credentialOpt.isPresent()) {
                 Credential credential = credentialOpt.get();
 
-                // Decrypt password
+                // Decrypt password — CORRECT reconstruction of the Base64 value for decrypt
+                byte[] iv = credential.getEncryptionIV();
+                byte[] encrypted = credential.getEncryptedPassword();
+                byte[] combined = new byte[iv.length + encrypted.length];
+                System.arraycopy(iv, 0, combined, 0, iv.length);
+                System.arraycopy(encrypted, 0, combined, iv.length, encrypted.length);
+                String base64 = java.util.Base64.getEncoder().encodeToString(combined);
+
                 EncryptionServiceImpl encryptionService = new EncryptionServiceImpl();
                 String decrypted = encryptionService.decryptPassword(
-                        new String(credential.getEncryptedPassword()),
+                        base64,
                         SessionManager.getInstance().getMasterKey()
                 );
 
