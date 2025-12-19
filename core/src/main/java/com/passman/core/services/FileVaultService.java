@@ -92,29 +92,32 @@ public class FileVaultService {
      */
     public void setVaultPassword(Long vaultId, char[] newPassword) throws Exception {
         Optional<FileVault> vaultOpt = vaultRepository.findById(vaultId);
-        if (vaultOpt.isEmpty()) {
-            throw new IllegalArgumentException("Vault not found");
-        }
+        if (vaultOpt.isEmpty()) throw new IllegalArgumentException("Vault not found");
 
         FileVault vault = vaultOpt.get();
 
         if (newPassword != null && newPassword.length > 0) {
-            byte[] salt = keyDerivation.generateSalt();
+            byte[] salt = vault.getVaultSalt();
+            if (salt == null) salt = keyDerivation.generateSalt(); // reuse existing salt if present
+
             byte[] passwordHash = keyDerivation.hashPassword(newPassword, salt);
 
             vault.setVaultSalt(salt);
             vault.setVaultPasswordHash(passwordHash);
             vault.setHasSeparatePassword(true);
 
+            vaultRepository.update(vault); // make sure DB is updated here
+
             Arrays.fill(newPassword, '\0');
             Arrays.fill(passwordHash, (byte) 0);
         } else {
+            // Remove password
             vault.setVaultSalt(null);
-            vault. setVaultPasswordHash(null);
+            vault.setVaultPasswordHash(null);
             vault.setHasSeparatePassword(false);
-        }
 
-        vaultRepository.update(vault);
+            vaultRepository.update(vault);
+        }
     }
 
     /**

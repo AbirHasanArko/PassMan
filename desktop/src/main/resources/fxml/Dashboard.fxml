@@ -63,7 +63,8 @@
                     <Button text="🔒 Passwords" styleClass="sidebar-button" maxWidth="Infinity"/>
                     <Button text="📝 Secure Notes" onAction="#handleNotes" styleClass="sidebar-button" maxWidth="Infinity"/>
                     <Button text="🆔 Identity Cards" onAction="#handleIdentityCards" styleClass="sidebar-button" maxWidth="Infinity"/>
-                    <Button text="📁 File Vaults" styleClass="sidebar-button" maxWidth="Infinity"/>
+                    <!-- Update the File Vaults button -->
+                    <Button text="📁 File Vaults" onAction="#handleFileVaults" styleClass="sidebar-button" maxWidth="Infinity"/>
 
                     <Separator/>
 

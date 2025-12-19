@@ -1,5 +1,6 @@
 package com.passman.desktop;
 
+import com.passman.desktop.utils.ActivityTracker;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene. Scene;
@@ -29,6 +30,7 @@ public class SceneManager {
         sceneMap.put("Dashboard", "/fxml/Dashboard.fxml");
         sceneMap.put("SecureNotes", "/fxml/SecureNotes.fxml");
         sceneMap.put("IdentityCards", "/fxml/IdentityCards.fxml");
+        sceneMap.put("FileVaultBrowser", "/fxml/FileVaultBrowser.fxml"); // ✅ ADD THIS
         sceneMap.put("BackupRestoreView", "/fxml/BackupRestoreView.fxml");
         sceneMap.put("QRShareView", "/fxml/QRShareView.fxml");
         sceneMap.put("GraphView", "/fxml/GraphView. fxml");
@@ -52,6 +54,10 @@ public class SceneManager {
             // Apply CSS
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
+
+            if (!"Login".equals(sceneName)) {
+                ActivityTracker.getInstance().attachToScene(scene);
+            }
 
             currentScene = scene;
             primaryStage.setScene(scene);

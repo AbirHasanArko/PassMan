@@ -15,6 +15,16 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.testfx:testfx-core:4.0.18")
     testImplementation("org.testfx:testfx-junit5:4.0.18")
+
+    // For QR Code generation
+    implementation("com.google.zxing:core:3.5.2")
+    implementation("com.google.zxing:javase:3.5.2")
+
+    // For Charts (Analytics)
+    // JavaFX already includes charts, no extra dependency
+
+    // For better date/time handling
+    implementation("org.threeten:threeten-extra:1.7.2")
 }
 
 javafx {

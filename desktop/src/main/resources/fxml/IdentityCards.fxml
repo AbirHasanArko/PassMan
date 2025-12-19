@@ -19,7 +19,7 @@
                 <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
                 <Label text="🆔 Identity Cards" styleClass="page-title"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <TextField fx: id="searchField" promptText="Search cards..." prefWidth="250"/>
+                <TextField fx:id="searchField" promptText="Search cards..." prefWidth="250"/>
                 <Button text="+ Add Card" onAction="#handleAddCard" styleClass="primary-button"/>
             </HBox>
 

@@ -1,6 +1,7 @@
 package com.passman.desktop;
 
 import com.passman.core.db.DatabaseManager;
+import com.passman.desktop.utils.SessionTimeoutMonitor;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -38,6 +39,9 @@ public class MainApp extends Application {
 
         // Show stage
         primaryStage.show();
+
+        // Start session timeout monitor
+        SessionTimeoutMonitor.getInstance().start();
 
         // Cleanup on close
         primaryStage.setOnCloseRequest(event -> {

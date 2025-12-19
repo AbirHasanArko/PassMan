@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.passman.desktop.ui.vault.FileVaultBrowserController"
+            stylesheets="@../styles/main.css">
+
+    <!-- Top Bar -->
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
+                <padding>
+                    <Insets top="10" right="20" bottom="10" left="20"/>
+                </padding>
+
+                <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
+                <Label text="📁 File Vaults" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="⚙️ Manage Vaults" onAction="#handleManageVaults" styleClass="action-button"/>
+            </HBox>
+
+            <!-- Vault Selection Bar -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="filter-bar">
+                <padding>
+                    <Insets top="10" right="20" bottom="10" left="20"/>
+                </padding>
+
+                <Label text="Select Vault: "/>
+                <ComboBox fx:id="vaultSelector" onAction="#handleVaultSelected" prefWidth="250"/>
+                <Label fx:id="vaultStatusLabel" text="Select a vault"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="unlockButton" text="🔓 Unlock" onAction="#handleUnlockVault" styleClass="action-button"/>
+                <Button fx:id="lockButton" text="🔒 Lock" onAction="#handleLockVault" styleClass="secondary-button"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <BorderPane>
+
+            <!-- Files List -->
+            <center>
+                <VBox spacing="10">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Encrypted Files" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="fileCountLabel" text="0 files" styleClass="stats-label"/>
+                        <Label text="|" styleClass="stats-label"/>
+                        <Label fx:id="totalSizeLabel" text="0 B" styleClass="stats-label"/>
+                    </HBox>
+
+                    <ListView fx:id="filesListView" VBox.vgrow="ALWAYS"/>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <ProgressIndicator fx:id="progressIndicator" prefWidth="30" prefHeight="30" visible="false"/>
+                        <Label fx:id="statusLabel" text="Ready" styleClass="status-label"/>
+                    </HBox>
+                </VBox>
+            </center>
+
+            <!-- Action Buttons -->
+            <right>
+                <VBox spacing="10" styleClass="sidebar" prefWidth="180">
+                    <padding>
+                        <Insets top="20" right="10" bottom="20" left="10"/>
+                    </padding>
+
+                    <Label text="ACTIONS" styleClass="sidebar-header"/>
+
+                    <Button fx:id="addFileButton" text="➕ Add File"
+                            onAction="#handleAddFile" styleClass="primary-button"
+                            maxWidth="Infinity" disable="true"/>
+
+                    <Button fx:id="downloadButton" text="⬇ Download"
+                            onAction="#handleDownloadFile" styleClass="action-button"
+                            maxWidth="Infinity" disable="true"/>
+
+                    <Button fx:id="deleteButton" text="🗑️ Delete"
+                            onAction="#handleDeleteFile" styleClass="danger-button"
+                            maxWidth="Infinity" disable="true"/>
+
+                    <Separator/>
+
+                    <Label text="INFORMATION" styleClass="sidebar-header"/>
+
+                    <VBox spacing="5">
+                        <Label text="Vault Status:" styleClass="section-label"/>
+                        <Label text="Locked vaults require a password to access files."
+                               wrapText="true" styleClass="status-label"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="File Encryption:" styleClass="section-label"/>
+                        <Label text="All files are encrypted with AES-256-CBC before storage."
+                               wrapText="true" styleClass="status-label"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Security:" styleClass="section-label"/>
+                        <Label text="Files are verified with SHA-256 checksums."
+                               wrapText="true" styleClass="status-label"/>
+                    </VBox>
+                </VBox>
+            </right>
+
+        </BorderPane>
+    </center>
+
+</BorderPane>
