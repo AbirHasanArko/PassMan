@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry. Insets?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<? import javafx.scene.layout.*?>
+<?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx: controller="com.passman.desktop.ui.backup.BackupController"
+            fx:controller="com.passman.desktop.ui.backup.BackupController"
             stylesheets="@../styles/main.css">
 
     <top>
@@ -15,7 +15,7 @@
             </padding>
 
             <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
-            <Label text="💾 Backup & Restore" styleClass="page-title"/>
+            <Label text="💾 Backup &amp; Restore" styleClass="page-title"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Label fx:id="statsLabel" text="Total: 0 backups"/>
         </HBox>
