@@ -2,27 +2,265 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene. layout.*?>
+<?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com. passman.desktop.ui.placeholder.PlaceholderController"
+            fx:controller="com.passman.desktop.ui.admin.AdminPanelController"
             stylesheets="@../styles/main.css">
 
+    <!-- Top Bar -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
             <padding>
                 <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
+
             <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
-            <Label fx:id="titleLabel" text="Feature" styleClass="page-title"/>
+            <Label text="⚙️ Settings &amp; Administration" styleClass="page-title"/>
         </HBox>
     </top>
 
     <center>
-        <VBox alignment="CENTER" spacing="20">
-            <Label text="🚧" style="-fx-font-size:  72px;"/>
-            <Label fx:id="messageLabel" text="This feature is coming soon!" styleClass="placeholder-message"/>
-        </VBox>
+        <TabPane tabClosingPolicy="UNAVAILABLE" side="LEFT">
+
+            <!-- General Settings Tab -->
+            <Tab text="General">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+
+                        <Label text="General Settings" styleClass="section-title"/>
+                        <Separator/>
+
+                        <VBox spacing="10">
+                            <Label text="Account Information" styleClass="section-label"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Username:" prefWidth="120"/>
+                                <TextField fx:id="usernameField" prefWidth="250" editable="false"/>
+                            </HBox>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Created:" prefWidth="120"/>
+                                <Label fx:id="createdAtLabel" text="-" styleClass="value-label"/>
+                            </HBox>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Last Login:" prefWidth="120"/>
+                                <Label fx:id="lastLoginLabel" text="-" styleClass="value-label"/>
+                            </HBox>
+                        </VBox>
+
+                        <Separator/>
+
+                        <VBox spacing="10">
+                            <Label text="Security Preferences" styleClass="section-label"/>
+
+                            <CheckBox fx:id="autoLockCheckbox"
+                                      text="Automatically lock vault after inactivity"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Auto-lock timeout (minutes):"/>
+                                <Spinner fx:id="autoLockMinutesSpinner" prefWidth="100"/>
+                            </HBox>
+                        </VBox>
+
+                        <Separator/>
+
+                        <HBox spacing="10">
+                            <Button text="Save Settings" onAction="#handleSaveSettings" styleClass="primary-button"/>
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Security Tab -->
+            <Tab text="Security">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+
+                        <Label text="Security Settings" styleClass="section-title"/>
+                        <Separator/>
+
+                        <VBox spacing="15">
+                            <Label text="Change Master Password" styleClass="section-label"/>
+
+                            <Label text="⚠️ WARNING:  Changing your master password is a critical operation!"
+                                   styleClass="error-label" wrapText="true"/>
+
+                            <VBox spacing="5">
+                                <Label text="Current Master Password:"/>
+                                <PasswordField fx:id="currentPasswordField" prefWidth="300"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="New Master Password: "/>
+                                <PasswordField fx:id="newPasswordField" prefWidth="300"/>
+                                <HBox spacing="5" alignment="CENTER_LEFT">
+                                    <ProgressBar fx:id="passwordStrengthBar" prefWidth="200"/>
+                                    <Label fx:id="passwordStrengthLabel" text="Weak"/>
+                                </HBox>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Confirm New Password:"/>
+                                <PasswordField fx:id="confirmPasswordField" prefWidth="300"/>
+                            </VBox>
+
+                            <Label text="Requirements:" styleClass="section-label"/>
+                            <VBox spacing="3">
+                                <Label text="• Minimum 8 characters (12+ recommended)" styleClass="status-label"/>
+                                <Label text="• Include uppercase and lowercase letters" styleClass="status-label"/>
+                                <Label text="• Include numbers and special characters" styleClass="status-label"/>
+                                <Label text="• Avoid dictionary words and personal information" styleClass="status-label"/>
+                            </VBox>
+
+                            <Button fx:id="changeMasterPasswordButton" text="Change Master Password"
+                                    onAction="#handleChangeMasterPassword" styleClass="danger-button"/>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Database Tab -->
+            <Tab text="Database">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="20">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+
+                        <Label text="Database Management" styleClass="section-title"/>
+                        <Separator/>
+
+                        <VBox spacing="10">
+                            <Label text="Database Information" styleClass="section-label"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Location:" prefWidth="150"/>
+                                <Label fx:id="databasePathLabel" text="-" wrapText="true" maxWidth="400" styleClass="value-label"/>
+                                <Button text="Open Folder" onAction="#handleOpenDatabaseLocation" styleClass="small-button"/>
+                            </HBox>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Database Size:" prefWidth="150"/>
+                                <Label fx:id="databaseSizeLabel" text="-" styleClass="value-label"/>
+                            </HBox>
+                        </VBox>
+
+                        <Separator/>
+
+                        <VBox spacing="10">
+                            <Label text="Statistics" styleClass="section-label"/>
+
+                            <GridPane hgap="20" vgap="10">
+                                <Label text="Credentials:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label fx:id="credentialsCountLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="value-label"/>
+
+                                <Label text="Secure Notes:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Label fx:id="notesCountLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="value-label"/>
+
+                                <Label text="Identity Cards:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label fx:id="identityCardsCountLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="value-label"/>
+
+                                <Label text="Encrypted Files:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                <Label fx:id="encryptedFilesCountLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="value-label"/>
+                            </GridPane>
+                        </VBox>
+
+                        <Separator/>
+
+                        <VBox spacing="10">
+                            <Label text="Maintenance" styleClass="section-label"/>
+
+                            <HBox spacing="10">
+                                <Button fx:id="compactDatabaseButton" text="Compact Database"
+                                        onAction="#handleCompactDatabase" styleClass="action-button"/>
+                                <Label text="Optimize database storage" styleClass="status-label"/>
+                            </HBox>
+
+                            <HBox spacing="10">
+                                <Button fx:id="exportDatabaseButton" text="Export Database"
+                                        onAction="#handleExportDatabase" styleClass="action-button"/>
+                                <Label text="Use Backup &amp; Restore feature" styleClass="status-label"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Audit Log Tab -->
+            <Tab text="Audit Log">
+                <VBox spacing="10">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Audit Log" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="clearAuditLogButton" text="Clear Log"
+                                onAction="#handleClearAuditLog" styleClass="danger-button"/>
+                    </HBox>
+
+                    <Separator/>
+
+                    <Label text="Recent Activity (Last 100 entries)" styleClass="section-label"/>
+
+                    <ListView fx:id="auditLogListView" VBox.vgrow="ALWAYS"/>
+                </VBox>
+            </Tab>
+
+            <!-- About Tab -->
+            <Tab text="About">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="20" alignment="CENTER">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+
+                        <Label text="🔐" style="-fx-font-size:  64px;"/>
+                        <Label text="PassMan" styleClass="title"/>
+                        <Label fx:id="versionLabel" text="Version 1.0.0" styleClass="subtitle"/>
+
+                        <Separator maxWidth="400"/>
+
+                        <Label text="Secure Password Manager" styleClass="section-label"/>
+                        <Label text="End-to-End Encrypted | Zero-Knowledge Architecture"
+                               styleClass="status-label" wrapText="true" maxWidth="400" textAlignment="CENTER"/>
+
+                        <VBox spacing="5" alignment="CENTER">
+                            <Label text="Features:" styleClass="section-label"/>
+                            <Label text="✓ AES-256-CBC Encryption" styleClass="status-label"/>
+                            <Label text="✓ PBKDF2 Key Derivation (100,000 iterations)" styleClass="status-label"/>
+                            <Label text="✓ Secure Notes & Attachments" styleClass="status-label"/>
+                            <Label text="✓ Digital Identity Cards" styleClass="status-label"/>
+                            <Label text="✓ File Vaults" styleClass="status-label"/>
+                            <Label text="✓ Encrypted Backups" styleClass="status-label"/>
+                        </VBox>
+
+                        <Separator maxWidth="400"/>
+
+                        <VBox spacing="10" alignment="CENTER">
+                            <Button text="Check for Updates" onAction="#handleCheckForUpdates" styleClass="action-button"/>
+                        </VBox>
+
+                        <Separator maxWidth="400"/>
+
+                        <VBox spacing="10" maxWidth="600">
+                            <Label text="License" styleClass="section-label"/>
+                            <TextArea fx:id="licenseTextArea" prefRowCount="10" wrapText="true"/>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+        </TabPane>
     </center>
 
 </BorderPane>

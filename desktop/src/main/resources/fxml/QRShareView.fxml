@@ -2,26 +2,87 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.passman.desktop.ui.placeholder.PlaceholderController"
+            fx:controller="com.passman.desktop.ui.qr.QRShareController"
             stylesheets="@../styles/main.css">
 
+    <!-- Top Bar -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
             <padding>
                 <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
+
             <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
-            <Label fx:id="titleLabel" text="Feature" styleClass="page-title"/>
+            <Label text="📱 QR Code Password Sharing" styleClass="page-title"/>
         </HBox>
     </top>
 
     <center>
-        <VBox alignment="CENTER" spacing="20">
-            <Label text="🚧" style="-fx-font-size:  72px;"/>
-            <Label fx:id="messageLabel" text="This feature is coming soon!" styleClass="placeholder-message"/>
+        <VBox spacing="20" alignment="CENTER">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <!-- Warning Banner -->
+            <HBox spacing="10" style="-fx-background-color:  #FFF3CD; -fx-padding: 15; -fx-background-radius:  8; -fx-border-color: #FFC107; -fx-border-width: 2; -fx-border-radius: 8;" maxWidth="600">
+                <Label text="⚠️" style="-fx-font-size: 24px;"/>
+                <VBox spacing="5">
+                    <Label text="Security Warning" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                    <Label text="QR codes can be scanned by anyone.  Only use in secure, private locations.  The password will be encoded but not encrypted."
+                           wrapText="true" styleClass="status-label"/>
+                </VBox>
+            </HBox>
+
+            <!-- Input Section -->
+            <VBox spacing="15" maxWidth="500" style="-fx-background-color:  white; -fx-padding: 20; -fx-background-radius:  10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                <Label text="Password to Share" styleClass="section-label"/>
+
+                <TextField fx:id="passwordField" promptText="Enter password"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <CheckBox fx:id="noExpiryCheckbox" text="No expiry"/>
+                    <Label text="Expires in: "/>
+                    <Spinner fx:id="expirySpinner" prefWidth="100"/>
+                    <Label text="minutes"/>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER">
+                    <Button text="Generate QR Code" onAction="#handleGenerate" styleClass="primary-button"/>
+                    <Button text="Clear" onAction="#handleClear" styleClass="secondary-button"/>
+                </HBox>
+            </VBox>
+
+            <!-- QR Code Display -->
+            <VBox spacing="10" alignment="CENTER" style="-fx-background-color: white; -fx-padding:  20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                <Label text="QR Code" styleClass="section-label"/>
+
+                <StackPane style="-fx-background-color:  #F5F5F5; -fx-padding: 20; -fx-background-radius:  8;" prefWidth="450" prefHeight="450">
+                    <ImageView fx:id="qrCodeImageView" fitWidth="400" fitHeight="400" preserveRatio="true"/>
+                    <Label text="No QR code generated yet" styleClass="status-label"
+                           managed="${qrCodeImageView.image == null}" visible="${qrCodeImageView.image == null}"/>
+                </StackPane>
+
+                <Label fx:id="statusLabel" text="" wrapText="true"/>
+
+                <Button fx:id="saveButton" text="💾 Save QR Code" onAction="#handleSaveQRCode" styleClass="action-button" disable="true"/>
+            </VBox>
+
+            <!-- Instructions -->
+            <VBox spacing="10" maxWidth="600" style="-fx-background-color: #E3F2FD; -fx-padding: 15; -fx-background-radius:  8;">
+                <Label text="How to Use:" style="-fx-font-weight:  bold;"/>
+                <VBox spacing="3">
+                    <Label text="1. Enter the password you want to share" styleClass="status-label"/>
+                    <Label text="2. Set an expiry time (optional)" styleClass="status-label"/>
+                    <Label text="3. Click 'Generate QR Code'" styleClass="status-label"/>
+                    <Label text="4. Save the image or let someone scan it directly" styleClass="status-label"/>
+                    <Label text="5. The recipient can scan the QR code to get the password" styleClass="status-label"/>
+                </VBox>
+            </VBox>
+
         </VBox>
     </center>
 

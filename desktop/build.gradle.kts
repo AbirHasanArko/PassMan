@@ -34,7 +34,8 @@ javafx {
         "javafx.fxml",
         "javafx.graphics",
         "javafx.base",
-        "javafx.web"  // Added - contains javafx.scene.text.Font and other text components
+        "javafx.web",  // Added - contains javafx.scene.text.Font and other text components
+        "javafx.swing"
     )
 }
 
