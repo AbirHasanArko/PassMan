@@ -460,6 +460,25 @@ Follow [docs/GOOGLE_DRIVE_SETUP. md](docs/GOOGLE_DRIVE_SETUP.md) to:
 # Output: desktop/build/jpackage/PassMan-1.0.0.{exe|dmg|deb}
 ```
 
+#### Running in IntelliJ IDEA
+
+When running the desktop application from IntelliJ IDEA:
+
+1. **Reimport Gradle Project**: After cloning or updating dependencies, go to:
+   - `File` → `Invalidate Caches / Restart` → `Invalidate and Restart`
+   - Or right-click on `build.gradle.kts` → `Reload Gradle Project`
+
+2. **Use Gradle Run Task**: In the Gradle tool window (View → Tool Windows → Gradle):
+   - Navigate to `PassMan → desktop → Tasks → application → run`
+   - Double-click to run the application
+
+3. **Alternative - Delegate to Gradle**: Configure IntelliJ to use Gradle for running:
+   - `File` → `Settings` → `Build, Execution, Deployment` → `Build Tools` → `Gradle`
+   - Under "Build and run using" select: `Gradle (Default)`
+   - Under "Run tests using" select: `Gradle (Default)`
+
+> **Note**: If you see `ClassNotFoundException: javafx.scene.text.Font`, this means IntelliJ's run configuration is not properly configured for JavaFX modules. Follow steps 1-3 above to resolve.
+
 ### Android Application
 
 ```bash
