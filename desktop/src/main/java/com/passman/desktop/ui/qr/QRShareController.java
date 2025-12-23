@@ -48,15 +48,15 @@ public class QRShareController {
 
     @FXML
     private void handleGenerate() {
-        String password = passwordField.getText();
-
-        if (password.isEmpty()) {
-            DialogUtils.showWarning("Validation", "Password Required",
-                    "Please enter a password to generate QR code.");
+        if (passwordField == null || expirySpinner == null || noExpiryCheckbox == null || qrCodeService == null) {
+            DialogUtils.showError("Error", "UI Not Ready", "Required UI components are missing.");
             return;
         }
-
-        // Security warning
+        String password = passwordField.getText();
+        if (password == null || password.isEmpty()) {
+            DialogUtils.showWarning("Validation", "Password Required", "Please enter a password to generate QR code.");
+            return;
+        }
         boolean confirm = DialogUtils.showConfirmation(
                 "⚠️ Security Warning",
                 "Generate QR Code for Password? ",
@@ -65,23 +65,17 @@ public class QRShareController {
                         "The QR code will contain the password in encoded form.\n\n" +
                         "Do you want to continue?"
         );
-
         if (!confirm) {
             return;
         }
-
         try {
-            int expiryMinutes = noExpiryCheckbox.isSelected() ? 0 : expirySpinner.getValue();
-
+            Integer expiryMinutes = noExpiryCheckbox.isSelected() ? 0 : expirySpinner.getValue();
+            if (expiryMinutes == null) expiryMinutes = 0;
             currentQRCodeImage = qrCodeService.generatePasswordQRCode(password, expiryMinutes);
-
-            // Display QR code
             BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(currentQRCodeImage));
-            Image image = SwingFXUtils. toFXImage(bufferedImage, null);
+            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
             qrCodeImageView.setImage(image);
-
             saveButton.setDisable(false);
-
             if (expiryMinutes > 0) {
                 statusLabel.setText("✅ QR Code generated (expires in " + expiryMinutes + " minutes)");
                 statusLabel.setStyle("-fx-text-fill: #2ECC71;");
@@ -89,9 +83,8 @@ public class QRShareController {
                 statusLabel.setText("✅ QR Code generated (no expiry)");
                 statusLabel.setStyle("-fx-text-fill: #2ECC71;");
             }
-
         } catch (Exception e) {
-            DialogUtils. showError("Error", "Failed to generate QR code", e.getMessage());
+            DialogUtils.showError("Error", "Failed to generate QR code", e.getMessage());
         }
     }
 

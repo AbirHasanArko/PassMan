@@ -1,13 +1,13 @@
 package com.passman.core.services;
 
 import com.passman.core.db.DatabaseManager;
-import com. passman.core.model. Credential;
-import com.passman. core.repository.CredentialRepository;
+import com.passman.core.model.Credential;
+import com.passman.core.repository.CredentialRepository;
 import com.passman.core.repository.CredentialRepositoryImpl;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
-import java. time.temporal.ChronoUnit;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,10 +48,14 @@ public class AnalyticsService {
      * Calculate individual password strength score (0-100)
      */
     public int calculatePasswordScore(Credential credential, SecretKey masterKey) throws Exception {
-        String password = encryptionService.decryptPassword(
-                new String(credential.getEncryptedPassword()),
-                masterKey
-        );
+        String decrypted = null;
+        if (credential.getEncryptedPassword() != null) {
+            decrypted = encryptionService.decryptPassword(
+                    new String(credential.getEncryptedPassword()),
+                    masterKey
+            );
+        }
+        String password = decrypted == null ? "" : decrypted;
 
         int score = 0;
 
@@ -66,10 +70,12 @@ public class AnalyticsService {
         if (password.matches(".*[A-Z].*")) score += 10;
         if (password.matches(".*[a-z].*")) score += 10;
         if (password.matches(".*[0-9].*")) score += 5;
-        if (password.matches(".*[! @#$%^&*()_+\\-=\\[\\]{}|;: ,.<>?].*")) score += 5;
+        if (password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{}|;:,.<>?].*")) score += 5;
 
         // Age penalty (max -20 points)
-        long daysSinceCreated = ChronoUnit.DAYS.between(credential.getCreatedAt(), LocalDateTime.now());
+        long daysSinceCreated = credential.getCreatedAt() != null
+                ? ChronoUnit.DAYS.between(credential.getCreatedAt(), LocalDateTime.now())
+                : 0;
         if (daysSinceCreated > 365) score -= 20;
         else if (daysSinceCreated > 180) score -= 10;
 
@@ -77,7 +83,7 @@ public class AnalyticsService {
         if (isCommonPassword(password)) score -= 20;
         if (hasRepeatingCharacters(password)) score -= 10;
 
-        return Math.max(0, Math. min(100, score));
+        return Math.max(0, Math.min(100, score));
     }
 
     /**
@@ -109,14 +115,16 @@ public class AnalyticsService {
      * Get password age distribution
      */
     public Map<String, Integer> getAgeDistribution() throws Exception {
-        List<Credential> credentials = credentialRepository. findAll();
+        List<Credential> credentials = credentialRepository.findAll();
 
         int fresh = 0;    // < 90 days
         int old = 0;      // 90-365 days
         int veryOld = 0;  // > 365 days
 
         for (Credential cred : credentials) {
-            long days = ChronoUnit.DAYS.between(cred.getCreatedAt(), LocalDateTime.now());
+            long days = cred.getCreatedAt() != null
+                    ? ChronoUnit.DAYS.between(cred.getCreatedAt(), LocalDateTime.now())
+                    : 0;
             if (days < 90) fresh++;
             else if (days < 365) old++;
             else veryOld++;
@@ -138,18 +146,21 @@ public class AnalyticsService {
         Map<String, List<Credential>> passwordMap = new HashMap<>();
 
         for (Credential cred : credentials) {
-            String password = encryptionService.decryptPassword(
-                    new String(cred.getEncryptedPassword()),
-                    masterKey
-            );
-
+            String decrypted = null;
+            if (cred.getEncryptedPassword() != null) {
+                decrypted = encryptionService.decryptPassword(
+                        new String(cred.getEncryptedPassword()),
+                        masterKey
+                );
+            }
+            String password = decrypted == null ? "" : decrypted;
             passwordMap.computeIfAbsent(password, k -> new ArrayList<>()).add(cred);
         }
 
-        // Filter only reused passwords
+        // Filter only reused non-empty passwords
         return passwordMap.entrySet().stream()
-                .filter(entry -> entry. getValue().size() > 1)
-                .collect(Collectors. toMap(Map.Entry::getKey, Map. Entry::getValue));
+                .filter(entry -> entry.getKey() != null && !entry.getKey().isEmpty() && entry.getValue().size() > 1)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
@@ -178,7 +189,9 @@ public class AnalyticsService {
         // Check for old passwords
         int oldCount = 0;
         for (Credential cred : credentials) {
-            long days = ChronoUnit. DAYS.between(cred. getCreatedAt(), LocalDateTime.now());
+            long days = cred.getCreatedAt() != null
+                    ? ChronoUnit.DAYS.between(cred.getCreatedAt(), LocalDateTime.now())
+                    : 0;
             if (days > 365) oldCount++;
         }
         if (oldCount > 0) {
@@ -192,7 +205,7 @@ public class AnalyticsService {
 
         // Check for password reuse
         Map<String, List<Credential>> reused = detectPasswordReuse(masterKey);
-        if (!reused. isEmpty()) {
+        if (!reused.isEmpty()) {
             recommendations.add(new SecurityRecommendation(
                     "🟠 IMPORTANT",
                     "Password Reuse Detected",
@@ -225,13 +238,16 @@ public class AnalyticsService {
         stats.securityScore = calculateSecurityScore(masterKey);
 
         // Calculate averages
-        if (! credentials.isEmpty()) {
+        if (!credentials.isEmpty()) {
             int totalScore = 0;
             long totalAge = 0;
 
             for (Credential cred : credentials) {
                 totalScore += calculatePasswordScore(cred, masterKey);
-                totalAge += ChronoUnit.DAYS.between(cred.getCreatedAt(), LocalDateTime.now());
+                long age = cred.getCreatedAt() != null
+                        ? ChronoUnit.DAYS.between(cred.getCreatedAt(), LocalDateTime.now())
+                        : 0;
+                totalAge += age;
             }
 
             stats.averagePasswordStrength = totalScore / credentials.size();
@@ -250,6 +266,7 @@ public class AnalyticsService {
     // Helper methods
 
     private boolean isCommonPassword(String password) {
+        if (password == null) return false;
         String[] commonPasswords = {
                 "password", "123456", "qwerty", "admin", "letmein",
                 "welcome", "monkey", "dragon", "master", "sunshine"
@@ -265,6 +282,7 @@ public class AnalyticsService {
     }
 
     private boolean hasRepeatingCharacters(String password) {
+        if (password == null) return false;
         for (int i = 0; i < password.length() - 2; i++) {
             if (password.charAt(i) == password.charAt(i + 1) &&
                     password.charAt(i) == password.charAt(i + 2)) {

@@ -238,7 +238,7 @@
                             <Label text="Features:" styleClass="section-label"/>
                             <Label text="✓ AES-256-CBC Encryption" styleClass="status-label"/>
                             <Label text="✓ PBKDF2 Key Derivation (100,000 iterations)" styleClass="status-label"/>
-                            <Label text="✓ Secure Notes & Attachments" styleClass="status-label"/>
+                            <Label text="✓ Secure Notes &amp; Attachments" styleClass="status-label"/>
                             <Label text="✓ Digital Identity Cards" styleClass="status-label"/>
                             <Label text="✓ File Vaults" styleClass="status-label"/>
                             <Label text="✓ Encrypted Backups" styleClass="status-label"/>

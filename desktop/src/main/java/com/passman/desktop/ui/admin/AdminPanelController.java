@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -354,11 +355,18 @@ public class AdminPanelController {
     @FXML
     private void handleOpenDatabaseLocation() {
         String dbPath = dbManager.getDatabasePath();
-        String parentDir = new java.io.File(dbPath).getParent();
-
+        if (dbPath == null || dbPath.isEmpty()) {
+            DialogUtils.showError("Error", "Failed to open location", "Database path is not set.");
+            return;
+        }
+        File parentDir = new File(dbPath).getParentFile();
+        if (parentDir == null || !parentDir.exists()) {
+            DialogUtils.showError("Error", "Failed to open location", "Database directory does not exist.");
+            return;
+        }
         try {
             if (java.awt.Desktop.isDesktopSupported()) {
-                java.awt.Desktop. getDesktop().open(new java.io.File(parentDir));
+                java.awt.Desktop.getDesktop().open(parentDir);
             }
         } catch (Exception e) {
             DialogUtils.showError("Error", "Failed to open location", e.getMessage());
