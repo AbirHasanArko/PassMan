@@ -8,8 +8,8 @@ import com.google.zxing.common.BitMatrix;
 
 import javax.crypto.SecretKey;
 import java.io.ByteArrayOutputStream;
-import java. time.LocalDateTime;
-import java. util.Base64;
+import java.time.LocalDateTime;
+import java.util.Base64;
 
 /**
  * Service for QR code generation and password sharing

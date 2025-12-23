@@ -1,24 +1,24 @@
 package com.passman.desktop.ui.admin;
 
-import com.passman.core.crypto.PBKDF2KeyDerivation;
+import com.passman.core.crypto. PBKDF2KeyDerivation;
 import com.passman.core.db.DatabaseManager;
-import com.passman.core.db.dao.UserDAO;
+import com. passman.core.db.dao.UserDAO;
 import com.passman.core.model.User;
 import com.passman.desktop.DialogUtils;
 import com.passman.desktop.MainApp;
 import com.passman.desktop.SessionManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql. Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-
+import java.util.prefs.Preferences;
 
 /**
  * Controller for Admin Panel / Settings
@@ -61,70 +61,120 @@ public class AdminPanelController {
     private DatabaseManager dbManager;
     private UserDAO userDAO;
     private PBKDF2KeyDerivation keyDerivation;
+    private Preferences preferences;
 
     @FXML
     public void initialize() {
-        dbManager = DatabaseManager.getInstance();
-        userDAO = new UserDAO(dbManager);
-        keyDerivation = new PBKDF2KeyDerivation();
+        try {
+            dbManager = DatabaseManager.getInstance();
+            userDAO = new UserDAO(dbManager);
+            keyDerivation = new PBKDF2KeyDerivation();
+            preferences = Preferences.userNodeForPackage(AdminPanelController.class);
 
-        // Setup spinners
-        autoLockMinutesSpinner.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 120, 30)
-        );
+            // Setup spinners
+            if (autoLockMinutesSpinner != null) {
+                autoLockMinutesSpinner.setValueFactory(
+                        new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 120, 30)
+                );
+            }
 
-        // Password strength indicator
-        newPasswordField.textProperty().addListener((obs, old, newVal) -> {
-            updatePasswordStrength(newVal);
-        });
+            // Password strength indicator
+            if (newPasswordField != null) {
+                newPasswordField.textProperty().addListener((obs, old, newVal) -> {
+                    updatePasswordStrength(newVal);
+                });
+            }
 
-        // Load data
-        loadUserSettings();
-        loadDatabaseStatistics();
-        loadAuditLog();
-        loadAboutInfo();
+            // Load data
+            loadUserSettings();
+            loadDatabaseStatistics();
+            loadAuditLog();
+            loadAboutInfo();
+        } catch (Exception e) {
+            DialogUtils.showError("Initialization Error", "Failed to initialize Admin Panel",
+                    e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void loadUserSettings() {
-        User currentUser = SessionManager.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            usernameField.setText(currentUser. getUsername());
-            usernameField.setEditable(false);
+        try {
+            User currentUser = SessionManager.getInstance().getCurrentUser();
+            if (currentUser != null && usernameField != null) {
+                usernameField.setText(currentUser.getUsername());
+                usernameField.setEditable(false);
 
-            DateTimeFormatter formatter = DateTimeFormatter. ofPattern("yyyy-MM-dd HH:mm:ss");
+                DateTimeFormatter formatter = DateTimeFormatter. ofPattern("yyyy-MM-dd HH:mm:ss");
 
-            if (currentUser.getCreatedAt() != null) {
-                createdAtLabel.setText(currentUser.getCreatedAt().format(formatter));
+                if (currentUser.getCreatedAt() != null && createdAtLabel != null) {
+                    createdAtLabel.setText(currentUser.getCreatedAt().format(formatter));
+                }
+
+                if (currentUser.getLastLogin() != null && lastLoginLabel != null) {
+                    lastLoginLabel.setText(currentUser. getLastLogin().format(formatter));
+                }
             }
 
-            if (currentUser.getLastLogin() != null) {
-                lastLoginLabel.setText(currentUser.getLastLogin().format(formatter));
+            // Load preferences from persistent storage
+            if (autoLockCheckbox != null) {
+                boolean autoLock = preferences.getBoolean("auto_lock_enabled", true);
+                autoLockCheckbox.setSelected(autoLock);
             }
+
+            if (autoLockMinutesSpinner != null) {
+                int autoLockMinutes = preferences.getInt("auto_lock_minutes", 30);
+                autoLockMinutesSpinner.getValueFactory().setValue(autoLockMinutes);
+            }
+        } catch (Exception e) {
+            DialogUtils.showError("Error", "Failed to load user settings", e.getMessage());
         }
-
-        // Load preferences (would be from preferences file/database)
-        autoLockCheckbox.setSelected(true);
-        autoLockMinutesSpinner.getValueFactory().setValue(30);
     }
 
     private void loadDatabaseStatistics() {
         try {
+            if (dbManager == null) {
+                throw new IllegalStateException("DatabaseManager is not initialized");
+            }
+
             DatabaseManager.DatabaseStatistics stats = dbManager.getStatistics();
 
-            databasePathLabel.setText(dbManager.getDatabasePath());
-            databaseSizeLabel.setText(String.format("%.2f MB", stats. databaseSizeMB));
-            credentialsCountLabel.setText(String.valueOf(stats.credentialCount));
-            notesCountLabel.setText(String.valueOf(stats.notesCount));
-            identityCardsCountLabel.setText(String.valueOf(stats.identityCardsCount));
-            encryptedFilesCountLabel.setText(String.valueOf(stats.encryptedFilesCount));
+            if (databasePathLabel != null) {
+                String dbPath = dbManager.getDatabasePath();
+                databasePathLabel.setText(dbPath != null ? dbPath : "N/A");
+            }
+
+            if (databaseSizeLabel != null) {
+                databaseSizeLabel.setText(String.format("%.2f MB", stats. databaseSizeMB));
+            }
+
+            if (credentialsCountLabel != null) {
+                credentialsCountLabel.setText(String.valueOf(stats.credentialCount));
+            }
+
+            if (notesCountLabel != null) {
+                notesCountLabel.setText(String.valueOf(stats.notesCount));
+            }
+
+            if (identityCardsCountLabel != null) {
+                identityCardsCountLabel.setText(String.valueOf(stats.identityCardsCount));
+            }
+
+            if (encryptedFilesCountLabel != null) {
+                encryptedFilesCountLabel.setText(String.valueOf(stats.encryptedFilesCount));
+            }
 
         } catch (Exception e) {
             DialogUtils.showError("Error", "Failed to load statistics", e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private void loadAuditLog() {
         try {
+            if (dbManager == null || auditLogListView == null) {
+                return;
+            }
+
             String sql = "SELECT * FROM audit_log ORDER BY timestamp DESC LIMIT 100";
 
             try (Connection conn = dbManager.getConnection();
@@ -155,83 +205,93 @@ public class AdminPanelController {
 
         } catch (Exception e) {
             DialogUtils.showError("Error", "Failed to load audit log", e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private void loadAboutInfo() {
-        versionLabel.setText("PassMan v1.0.0");
+        if (versionLabel != null) {
+            versionLabel.setText("PassMan v1.0.0");
+        }
 
-        licenseTextArea.setText("""
-            MIT License
-            
-            Copyright (c) 2024 PassMan
-            
-            Permission is hereby granted, free of charge, to any person obtaining a copy
-            of this software and associated documentation files (the "Software"), to deal
-            in the Software without restriction, including without limitation the rights
-            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-            copies of the Software, and to permit persons to whom the Software is
-            furnished to do so, subject to the following conditions:
-            
-            The above copyright notice and this permission notice shall be included in all
-            copies or substantial portions of the Software.
-            
-            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-            SOFTWARE.
-            """);
-        licenseTextArea.setEditable(false);
+        if (licenseTextArea != null) {
+            licenseTextArea.setText("""
+                MIT License
+                
+                Copyright (c) 2024 PassMan
+                
+                Permission is hereby granted, free of charge, to any person obtaining a copy
+                of this software and associated documentation files (the "Software"), to deal
+                in the Software without restriction, including without limitation the rights
+                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                copies of the Software, and to permit persons to whom the Software is
+                furnished to do so, subject to the following conditions:
+                
+                The above copyright notice and this permission notice shall be included in all
+                copies or substantial portions of the Software.
+                
+                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                SOFTWARE.
+                """);
+            licenseTextArea.setEditable(false);
+        }
     }
 
     @FXML
     private void handleChangeMasterPassword() {
-        String currentPassword = currentPasswordField.getText();
-        String newPassword = newPasswordField.getText();
-        String confirmPassword = confirmPasswordField.getText();
-
-        // Validation
-        if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-            DialogUtils.showWarning("Validation", "All fields required",
-                    "Please fill in all password fields.");
-            return;
-        }
-
-        if (!newPassword.equals(confirmPassword)) {
-            DialogUtils.showWarning("Validation", "Passwords don't match",
-                    "New password and confirmation don't match.");
-            return;
-        }
-
-        if (newPassword.length() < 8) {
-            DialogUtils. showWarning("Validation", "Password too short",
-                    "New password must be at least 8 characters.");
-            return;
-        }
-
-        // Verify current password
         try {
+            String currentPassword = currentPasswordField.getText();
+            String newPassword = newPasswordField.getText();
+            String confirmPassword = confirmPasswordField.getText();
+
+            // Validation
+            if (currentPassword. isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                DialogUtils.showWarning("Validation", "All fields required",
+                        "Please fill in all password fields.");
+                return;
+            }
+
+            if (!newPassword. equals(confirmPassword)) {
+                DialogUtils.showWarning("Validation", "Passwords don't match",
+                        "New password and confirmation don't match.");
+                return;
+            }
+
+            if (newPassword.length() < 8) {
+                DialogUtils. showWarning("Validation", "Password too short",
+                        "New password must be at least 8 characters.");
+                return;
+            }
+
+            // Verify current password
             User currentUser = SessionManager.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                throw new IllegalStateException("No user is currently logged in");
+            }
+
             char[] currentPasswordChars = currentPassword.toCharArray();
 
             boolean valid = keyDerivation.verifyPassword(
                     currentPasswordChars,
                     currentUser.getSalt(),
-                    currentUser.getHashedPassword()
+                    currentUser. getHashedPassword()
             );
 
             if (!valid) {
                 DialogUtils.showError("Invalid Password", "Current password is incorrect",
                         "Please enter your correct current master password.");
+                Arrays.fill(currentPasswordChars, '\0');
                 return;
             }
 
-            // WARNING: Changing master password requires re-encrypting all data
+            // WARNING:  Changing master password requires re-encrypting all data
             boolean confirm = DialogUtils.showConfirmation(
-                    "⚠️ WARNING:  Critical Operation",
+                    "⚠️ WARNING: Critical Operation",
                     "Changing Master Password",
                     "Changing your master password will require re-encrypting ALL your data.\n\n" +
                             "This process may take several minutes depending on the amount of data.\n\n" +
@@ -240,18 +300,13 @@ public class AdminPanelController {
             );
 
             if (!confirm) {
+                Arrays.fill(currentPasswordChars, '\0');
                 return;
             }
 
-            // Create backup first
-            DialogUtils.showInfo("Backup Required", "Creating Backup",
-                    "A backup will be created before changing the password.");
-
-            // TODO: Trigger backup creation
-
             // Generate new salt and hash
             char[] newPasswordChars = newPassword.toCharArray();
-            byte[] newSalt = keyDerivation. generateSalt();
+            byte[] newSalt = keyDerivation.generateSalt();
             byte[] newHashedPassword = keyDerivation.hashPassword(newPasswordChars, newSalt);
 
             // Update user
@@ -276,20 +331,33 @@ public class AdminPanelController {
                             "IMPORTANT: Remember your new password - it cannot be recovered!");
 
         } catch (Exception e) {
-            DialogUtils. showError("Error", "Failed to change password", e.getMessage());
+            DialogUtils.showError("Error", "Failed to change password", e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @FXML
     private void handleSaveSettings() {
-        // Save preferences (would typically go to preferences file or database)
-        boolean autoLock = autoLockCheckbox.isSelected();
-        int autoLockMinutes = autoLockMinutesSpinner.getValue();
+        try {
+            // Save preferences to persistent storage
+            if (autoLockCheckbox != null) {
+                boolean autoLock = autoLockCheckbox.isSelected();
+                preferences.putBoolean("auto_lock_enabled", autoLock);
+            }
 
-        // TODO:  Implement preferences persistence
+            if (autoLockMinutesSpinner != null) {
+                int autoLockMinutes = autoLockMinutesSpinner.getValue();
+                preferences.putInt("auto_lock_minutes", autoLockMinutes);
+            }
 
-        DialogUtils.showInfo("Success", "Settings Saved",
-                "Your settings have been saved successfully.");
+            preferences.flush(); // Ensure preferences are written to storage
+
+            DialogUtils.showInfo("Success", "Settings Saved",
+                    "Your settings have been saved successfully.");
+        } catch (Exception e) {
+            DialogUtils.showError("Error", "Failed to save settings", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -316,14 +384,19 @@ public class AdminPanelController {
 
             } catch (Exception e) {
                 DialogUtils.showError("Error", "Failed to compact database", e.getMessage());
+                e. printStackTrace();
             }
         }
     }
 
     @FXML
     private void handleExportDatabase() {
+        // Redirect to backup feature
         DialogUtils.showInfo("Export Database", "Use Backup Feature",
                 "Please use the Backup & Restore feature to export your database securely.");
+
+        // Optionally switch to backup scene
+        // MainApp.getSceneManager().switchScene("BackupRestoreView");
     }
 
     @FXML
@@ -348,28 +421,35 @@ public class AdminPanelController {
 
             } catch (Exception e) {
                 DialogUtils.showError("Error", "Failed to clear audit log", e.getMessage());
+                e.printStackTrace();
             }
         }
     }
 
     @FXML
     private void handleOpenDatabaseLocation() {
-        String dbPath = dbManager.getDatabasePath();
-        if (dbPath == null || dbPath.isEmpty()) {
-            DialogUtils.showError("Error", "Failed to open location", "Database path is not set.");
-            return;
-        }
-        File parentDir = new File(dbPath).getParentFile();
-        if (parentDir == null || !parentDir.exists()) {
-            DialogUtils.showError("Error", "Failed to open location", "Database directory does not exist.");
-            return;
-        }
         try {
+            String dbPath = dbManager.getDatabasePath();
+            if (dbPath == null || dbPath.isEmpty()) {
+                DialogUtils.showError("Error", "Failed to open location", "Database path is not set.");
+                return;
+            }
+
+            File parentDir = new File(dbPath).getParentFile();
+            if (parentDir == null || !parentDir.exists()) {
+                DialogUtils.showError("Error", "Failed to open location", "Database directory does not exist.");
+                return;
+            }
+
             if (java.awt.Desktop.isDesktopSupported()) {
-                java.awt.Desktop.getDesktop().open(parentDir);
+                java.awt.Desktop. getDesktop().open(parentDir);
+            } else {
+                DialogUtils.showError("Error", "Desktop not supported",
+                        "Cannot open file browser on this system.");
             }
         } catch (Exception e) {
             DialogUtils.showError("Error", "Failed to open location", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -382,6 +462,8 @@ public class AdminPanelController {
     @FXML
     private void handleViewLicense() {
         // License is already shown in the About tab
+        DialogUtils.showInfo("License", "MIT License",
+                "Please see the About tab for the full license text.");
     }
 
     @FXML
@@ -390,6 +472,10 @@ public class AdminPanelController {
     }
 
     private void updatePasswordStrength(String password) {
+        if (passwordStrengthBar == null || passwordStrengthLabel == null) {
+            return;
+        }
+
         if (password == null || password.isEmpty()) {
             passwordStrengthBar.setProgress(0);
             passwordStrengthLabel.setText("Weak");
@@ -398,13 +484,13 @@ public class AdminPanelController {
         }
 
         int score = 0;
-        if (password.length() >= 8) score += 20;
+        if (password. length() >= 8) score += 20;
         if (password.length() >= 12) score += 20;
         if (password.length() >= 16) score += 10;
         if (password.matches(".*[A-Z].*")) score += 15;
         if (password.matches(".*[a-z].*")) score += 15;
         if (password.matches(".*[0-9].*")) score += 10;
-        if (password.matches(".*[! @#$%^&*()_+\\-=\\[\\]{}|;:,.<>?].*")) score += 10;
+        if (password.matches(".*[! @#$%^&*()_+\\-=\\[\\]{}|;: ,.<>?].*")) score += 10;
 
         passwordStrengthBar.setProgress(score / 100.0);
 

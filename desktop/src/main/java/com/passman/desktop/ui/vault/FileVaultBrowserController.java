@@ -1,12 +1,12 @@
-package com.passman.desktop.ui. vault;
+package com.passman.desktop.ui.vault;
 
-import com.passman. core.db.DatabaseManager;
+import com.passman.core.db.DatabaseManager;
 import com. passman.core.model. EncryptedFile;
 import com.passman.core.model.FileVault;
 import com.passman.core.repository.FileVaultRepositoryImpl;
 import com. passman.core.services.FileEncryptionService;
-import com.passman. core.services.FileVaultService;
-import com.passman. desktop.DialogUtils;
+import com.passman.core.services.FileVaultService;
+import com.passman.desktop.DialogUtils;
 import com.passman.desktop.MainApp;
 import com.passman.desktop.SessionManager;
 import javafx.collections.FXCollections;

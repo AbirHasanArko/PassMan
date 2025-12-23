@@ -1,15 +1,15 @@
 package com.passman.desktop.ui.vault;
 
-import com.passman.core.db. DatabaseManager;
+import com.passman.core.db.DatabaseManager;
 import com.passman.core.model.FileVault;
 import com.passman.core.repository.FileVaultRepositoryImpl;
 import com. passman.core.services.FileVaultService;
 import com. passman.desktop.DialogUtils;
 import com.passman.desktop.SessionManager;
 import javafx.fxml.FXML;
-import javafx.scene.control. Label;
-import javafx.scene. control. PasswordField;
-import javafx. stage.Stage;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 

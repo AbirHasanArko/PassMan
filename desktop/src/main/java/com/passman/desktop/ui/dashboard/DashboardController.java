@@ -56,13 +56,13 @@ public class DashboardController {
             welcomeLabel.setText("Welcome, " + username + "!");
         }
 
-        // ✅ ADD THIS:  Bind table to ViewModel
+        // Bind table to ViewModel
         credentialsTable.setItems(viewModel.getCredentials());
 
-        // ✅ ADD THIS: Setup table columns with proper cell value factories
+        //  Setup table columns with proper cell value factories
         setupTableColumns();
 
-        // ✅ ADD THIS: Add row selection listener
+        // Add row selection listener
         credentialsTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
                     if (newSelection != null) {

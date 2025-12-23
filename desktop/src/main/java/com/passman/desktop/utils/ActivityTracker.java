@@ -2,9 +2,9 @@ package com.passman.desktop.utils;
 
 import com.passman.desktop.SessionManager;
 import javafx.event.Event;
-import javafx.event. EventHandler;
-import javafx. scene.Scene;
-import javafx.scene. input.KeyEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**

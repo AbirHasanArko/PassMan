@@ -4,8 +4,8 @@ import com.passman.desktop.MainApp;
 import com.passman.desktop.SessionManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx. application.Platform;
-import javafx. util.Duration;
+import javafx.application.Platform;
+import javafx.util.Duration;
 
 /**
  * Monitors session timeout and triggers auto-logout

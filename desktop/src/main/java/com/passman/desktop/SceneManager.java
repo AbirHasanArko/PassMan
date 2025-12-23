@@ -33,9 +33,9 @@ public class SceneManager {
         sceneMap.put("FileVaultBrowser", "/fxml/FileVaultBrowser.fxml"); // ✅ ADD THIS
         sceneMap.put("BackupRestoreView", "/fxml/BackupRestoreView.fxml");
         sceneMap.put("QRShareView", "/fxml/QRShareView.fxml");
-        sceneMap.put("GraphView", "/fxml/GraphView. fxml");
+        sceneMap.put("GraphView", "/fxml/GraphView.fxml");
         sceneMap.put("QuizView", "/fxml/QuizView.fxml");
-        sceneMap.put("AdminPanel", "/fxml/AdminPanel. fxml");
+        sceneMap.put("AdminPanel", "/fxml/AdminPanel.fxml");
     }
 
     /**

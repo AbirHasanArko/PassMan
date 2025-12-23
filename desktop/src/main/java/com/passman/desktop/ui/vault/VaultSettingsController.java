@@ -1,6 +1,6 @@
 package com.passman.desktop.ui.vault;
 
-import com.passman.core.db. DatabaseManager;
+import com.passman.core.db.DatabaseManager;
 import com.passman.core.model.FileVault;
 import com.passman.core.repository.FileVaultRepositoryImpl;
 import com. passman.core.services.FileVaultService;

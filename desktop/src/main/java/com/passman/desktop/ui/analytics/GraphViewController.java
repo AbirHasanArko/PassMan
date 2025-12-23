@@ -1,17 +1,16 @@
 package com.passman.desktop.ui.analytics;
 
-import com.passman. core.db.DatabaseManager;
-import com. passman.core.services.AnalyticsService;
+import com.passman.core.db.DatabaseManager;
+import com.passman.core.services. AnalyticsService;
 import com.passman.desktop.DialogUtils;
-import com.passman. desktop.MainApp;
+import com. passman.desktop.MainApp;
 import com.passman.desktop.SessionManager;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
-import javafx.scene. control. Label;
-import javafx.scene. control.ListView;
-import javafx.scene. layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 
-import java.util. Map;
+import java.util.Map;
 
 /**
  * Controller for Analytics/Graph View
@@ -35,101 +34,186 @@ public class GraphViewController {
 
     @FXML
     public void initialize() {
-        analyticsService = new AnalyticsService(DatabaseManager.getInstance());
+        try {
+            analyticsService = new AnalyticsService(DatabaseManager.getInstance());
 
-        loadAnalytics();
+            System.out.println("✅ GraphViewController initialized successfully");
+
+            loadAnalytics();
+        } catch (Exception e) {
+            System.err.println("❌ Failed to initialize GraphViewController:  " + e.getMessage());
+            e.printStackTrace();
+            DialogUtils.showError("Initialization Error",
+                    "Failed to initialize Analytics", e.getMessage());
+        }
     }
 
     private void loadAnalytics() {
         try {
             var masterKey = SessionManager.getInstance().getMasterKey();
 
+            if (masterKey == null) {
+                throw new IllegalStateException("Master key not found in session.  Please log in again.");
+            }
+
             // Load statistics
             var stats = analyticsService.getStatistics(masterKey);
 
-            securityScoreLabel.setText(stats.securityScore + "/100");
-            securityScoreLabel.setStyle(getScoreColor(stats.securityScore));
+            if (stats == null) {
+                throw new IllegalStateException("Failed to retrieve analytics statistics");
+            }
 
-            totalPasswordsLabel. setText(String.valueOf(stats.totalPasswords));
-            averageStrengthLabel.setText(stats.averagePasswordStrength + "/100");
-            averageAgeLabel.setText(stats.averagePasswordAge + " days");
-            reusedCountLabel.setText(String.valueOf(stats.reusedPasswordCount));
+            // Update UI labels with null checks
+            if (securityScoreLabel != null) {
+                securityScoreLabel.setText(stats.securityScore + "/100");
+                securityScoreLabel.setStyle(getScoreColor(stats.securityScore));
+            }
 
-            // Load strength distribution
+            if (totalPasswordsLabel != null) {
+                totalPasswordsLabel.setText(String.valueOf(stats.totalPasswords));
+            }
+
+            if (averageStrengthLabel != null) {
+                averageStrengthLabel. setText(stats.averagePasswordStrength + "/100");
+            }
+
+            if (averageAgeLabel != null) {
+                averageAgeLabel.setText(stats.averagePasswordAge + " days");
+            }
+
+            if (reusedCountLabel != null) {
+                reusedCountLabel.setText(String.valueOf(stats.reusedPasswordCount));
+            }
+
+            // Load charts
             loadStrengthChart(masterKey);
-
-            // Load age distribution
             loadAgeChart();
-
-            // Load recommendations
             loadRecommendations(masterKey);
 
+            System.out.println("✅ Analytics loaded successfully");
+
         } catch (Exception e) {
-            DialogUtils.showError("Error", "Failed to load analytics", e.getMessage());
+            System.err.println("❌ Failed to load analytics:  " + e.getMessage());
+            e.printStackTrace();
+            DialogUtils.showError("Error", "Failed to load analytics",
+                    e.getMessage() + "\n\nPlease ensure you have credentials saved.");
         }
     }
 
     private void loadStrengthChart(javax.crypto.SecretKey masterKey) throws Exception {
-        Map<String, Integer> distribution = analyticsService.getStrengthDistribution(masterKey);
-
-        javafx.collections.ObservableList<PieChart.Data> pieChartData =
-                javafx. collections.FXCollections.observableArrayList();
-
-        for (Map.Entry<String, Integer> entry : distribution.entrySet()) {
-            if (entry.getValue() > 0) {
-                pieChartData.add(new PieChart. Data(
-                        entry.getKey() + " (" + entry.getValue() + ")",
-                        entry.getValue()
-                ));
-            }
+        if (strengthPieChart == null) {
+            System.out.println("⚠️ strengthPieChart is null, skipping");
+            return;
         }
 
-        strengthPieChart.setData(pieChartData);
-        strengthPieChart.setTitle("Password Strength Distribution");
+        try {
+            Map<String, Integer> distribution = analyticsService.getStrengthDistribution(masterKey);
 
-        // Apply colors
-        strengthPieChart.getData().forEach(data -> {
-            if (data.getName().startsWith("Strong")) {
-                data.getNode().setStyle("-fx-pie-color: #2ECC71;");
-            } else if (data.getName().startsWith("Medium")) {
-                data. getNode().setStyle("-fx-pie-color: #F39C12;");
-            } else {
-                data.getNode().setStyle("-fx-pie-color:  #E74C3C;");
+            if (distribution == null || distribution.isEmpty()) {
+                System.out.println("⚠️ No password strength data available");
+                strengthPieChart.setTitle("Password Strength Distribution (No Data)");
+                return;
             }
-        });
+
+            javafx.collections.ObservableList<PieChart. Data> pieChartData =
+                    javafx.collections. FXCollections.observableArrayList();
+
+            for (Map. Entry<String, Integer> entry :  distribution.entrySet()) {
+                if (entry.getValue() > 0) {
+                    pieChartData.add(new PieChart.Data(
+                            entry.getKey() + " (" + entry.getValue() + ")",
+                            entry.getValue()
+                    ));
+                }
+            }
+
+            strengthPieChart.setData(pieChartData);
+            strengthPieChart.setTitle("Password Strength Distribution");
+
+            // Apply colors
+            strengthPieChart.getData().forEach(data -> {
+                if (data.getName().startsWith("Strong")) {
+                    data.getNode().setStyle("-fx-pie-color: #2ECC71;");
+                } else if (data.getName().startsWith("Medium")) {
+                    data.getNode().setStyle("-fx-pie-color: #F39C12;");
+                } else {
+                    data.getNode().setStyle("-fx-pie-color: #E74C3C;");
+                }
+            });
+
+            System.out.println("✅ Strength chart loaded");
+        } catch (Exception e) {
+            System.err.println("❌ Failed to load strength chart: " + e.getMessage());
+            throw e;
+        }
     }
 
     private void loadAgeChart() throws Exception {
-        Map<String, Integer> distribution = analyticsService.getAgeDistribution();
-
-        XYChart.Series<String, Number> series = new XYChart. Series<>();
-        series.setName("Passwords");
-
-        for (Map. Entry<String, Integer> entry :  distribution.entrySet()) {
-            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        if (ageBarChart == null) {
+            System.out.println("⚠️ ageBarChart is null, skipping");
+            return;
         }
 
-        ageBarChart.getData().clear();
-        ageBarChart. getData().add(series);
-        ageBarChart.setTitle("Password Age Distribution");
-        ageBarChart.setLegendVisible(false);
+        try {
+            Map<String, Integer> distribution = analyticsService.getAgeDistribution();
+
+            if (distribution == null || distribution.isEmpty()) {
+                System.out.println("⚠️ No password age data available");
+                ageBarChart.setTitle("Password Age Distribution (No Data)");
+                return;
+            }
+
+            XYChart.Series<String, Number> series = new XYChart. Series<>();
+            series.setName("Passwords");
+
+            for (Map. Entry<String, Integer> entry :  distribution.entrySet()) {
+                series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+            }
+
+            ageBarChart.getData().clear();
+            ageBarChart. getData().add(series);
+            ageBarChart.setTitle("Password Age Distribution");
+            ageBarChart.setLegendVisible(false);
+
+            System.out.println("✅ Age chart loaded");
+        } catch (Exception e) {
+            System.err.println("❌ Failed to load age chart: " + e.getMessage());
+            throw e;
+        }
     }
 
     private void loadRecommendations(javax.crypto.SecretKey masterKey) throws Exception {
-        var recommendations = analyticsService.getRecommendations(masterKey);
-
-        javafx.collections.ObservableList<String> items =
-                javafx.collections.FXCollections.observableArrayList();
-
-        for (var rec : recommendations) {
-            items. add(rec.severity + " " + rec.title + "\n   " + rec.description);
+        if (recommendationsListView == null) {
+            System.out.println("⚠️ recommendationsListView is null, skipping");
+            return;
         }
 
-        recommendationsListView.setItems(items);
+        try {
+            var recommendations = analyticsService.getRecommendations(masterKey);
+
+            javafx.collections.ObservableList<String> items =
+                    javafx.collections. FXCollections.observableArrayList();
+
+            if (recommendations == null || recommendations.isEmpty()) {
+                items.add("✅ No recommendations - Great security posture!");
+            } else {
+                for (var rec : recommendations) {
+                    items.add(rec. severity + " " + rec.title + "\n   " + rec.description);
+                }
+            }
+
+            recommendationsListView.setItems(items);
+
+            System.out.println("✅ Recommendations loaded:  " + items.size() + " items");
+        } catch (Exception e) {
+            System.err.println("❌ Failed to load recommendations: " + e.getMessage());
+            throw e;
+        }
     }
 
     @FXML
     private void handleRefresh() {
+        System.out.println("🔄 Refreshing analytics.. .");
         loadAnalytics();
     }
 
