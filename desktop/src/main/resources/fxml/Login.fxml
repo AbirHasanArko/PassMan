@@ -71,7 +71,7 @@
             <padding>
                 <Insets top="10" bottom="10"/>
             </padding>
-            <Label text="PassMan v1.0.0 | © 2024 | End-to-End Encrypted"/>
+            <Label text="PassMan v1.0.0 | © 2025 | End-to-End Encrypted"/>
         </HBox>
     </bottom>
 
