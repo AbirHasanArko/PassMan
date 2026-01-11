@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter"
+        android:title="@string/filter_and_sort"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_generator"
+        android:icon="@drawable/ic_key"
+        android:title="@string/password_generator"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_scan_qr"
+        android:icon="@drawable/ic_qr_code"
+        android:title="Scan QR Code"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_vault"
+        android:icon="@drawable/ic_vault"
+        android:title="@string/file_vault"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_notes"
+        android:icon="@drawable/ic_notes"
+        android:title="Secure Notes"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_cards"
+        android:icon="@drawable/ic_cards"
+        android:title="My Cards"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_lock"
+        android:icon="@drawable/ic_lock"
+        android:title="@string/lock_vault"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/settings"
+        app:showAsAction="never" />
+
+</menu>

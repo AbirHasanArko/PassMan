@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom theme attributes for PassMan -->
+    <attr name="cardStrokeColor" format="color|reference" />
+    <attr name="cardBackgroundColor" format="color|reference" />
+    <attr name="dividerColor" format="color|reference" />
+    
+    <!-- Password strength indicator colors -->
+    <attr name="passwordStrengthWeak" format="color|reference" />
+    <attr name="passwordStrengthFair" format="color|reference" />
+    <attr name="passwordStrengthGood" format="color|reference" />
+    <attr name="passwordStrengthStrong" format="color|reference" />
+    
+    <!-- Category colors -->
+    <attr name="categorySocialColor" format="color|reference" />
+    <attr name="categoryFinanceColor" format="color|reference" />
+    <attr name="categoryWorkColor" format="color|reference" />
+    <attr name="categoryShoppingColor" format="color|reference" />
+    <attr name="categoryEntertainmentColor" format="color|reference" />
+    <attr name="categoryOtherColor" format="color|reference" />
+</resources>

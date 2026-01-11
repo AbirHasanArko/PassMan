@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PassMan</string>
+    
+    <!-- Authentication -->
+    <string name="welcome_title">Welcome to PassMan</string>
+    <string name="welcome_subtitle">All-in-One Security Solution</string>
+    <string name="master_password_hint">Master Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="unlock">Unlock</string>
+    <string name="create_vault">Create Vault</string>
+    <string name="use_biometric">Use Biometric</string>
+    <string name="biometric_prompt_title">Unlock PassMan</string>
+    <string name="biometric_prompt_subtitle">Use your fingerprint to unlock</string>
+    <string name="biometric_prompt_negative">Use Password</string>
+    <string name="password_min_length">Password must be at least 8 characters</string>
+    <string name="passwords_dont_match">Passwords don\'t match</string>
+    <string name="vault_created">Vault created successfully!</string>
+    <string name="login_failed">Invalid master password</string>
+    
+    <!-- Dashboard -->
+    <string name="dashboard">Dashboard</string>
+    <string name="all_passwords">All Passwords</string>
+    <string name="favorites">Favorites</string>
+    <string name="search_passwords">Search passwords…</string>
+    <string name="add_credential">Add Credential</string>
+    <string name="no_passwords">No passwords saved yet</string>
+    <string name="no_passwords_subtitle">Tap + to add your first password</string>
+    <string name="security_score">Security Score</string>
+    <string name="total_passwords">Total Passwords</string>
+    <string name="weak_passwords">Weak Passwords</string>
+    <string name="old_passwords">Old Passwords</string>
+    
+    <!-- Filter and Sort -->
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
+    <string name="search">Search</string>
+    <string name="filter_and_sort">Filter &amp; Sort</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_a_z">A → Z</string>
+    <string name="sort_z_a">Z → A</string>
+    <string name="sort_recent">Recent</string>
+    <string name="sort_oldest">Oldest</string>
+    <string name="sort_strength">Strength</string>
+    <string name="filter_by_category">Filter by Category</string>
+    <string name="filter_by_strength">Filter by Password Strength</string>
+    <string name="additional_filters">Additional Filters</string>
+    <string name="filter_old_passwords">Old (90+ days)</string>
+    <string name="filter_reused">Reused</string>
+    <string name="filter_breached">Breached</string>
+    <string name="category_all">All</string>
+    <string name="category_social">Social</string>
+    <string name="category_email">Email</string>
+    <string name="category_banking">Banking</string>
+    <string name="category_shopping">Shopping</string>
+    <string name="category_work">Work</string>
+    <string name="category_other">Other</string>
+    <string name="strength_all">All</string>
+    <string name="reset">Reset</string>
+    <string name="apply">Apply</string>
+    <string name="filters_applied">Filters applied</string>
+    <string name="filters_cleared">Filters cleared</string>
+    
+    <!-- Credential -->
+    <string name="title">Title</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="website_url">Website URL</string>
+    <string name="notes">Notes</string>
+    <string name="tags">Tags</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="copy">Copy</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="generate_password">Generate Password</string>
+    <string name="credential_saved">Credential saved</string>
+    <string name="credential_deleted">Credential deleted</string>
+    <string name="confirm_delete">Confirm Delete</string>
+    <string name="confirm_delete_message">Are you sure you want to delete this credential?</string>
+    <string name="add_to_favorites">Add to Favorites</string>
+    <string name="remove_from_favorites">Remove from Favorites</string>
+    <string name="share_qr">Share via QR</string>
+    <string name="last_modified">Last modified: %1$s</string>
+    <string name="password_age">Password age: %1$d days</string>
+    
+    <!-- Password Generator -->
+    <string name="password_generator">Password Generator</string>
+    <string name="password_length">Password Length</string>
+    <string name="include_uppercase">Include Uppercase (A-Z)</string>
+    <string name="include_lowercase">Include Lowercase (a-z)</string>
+    <string name="include_numbers">Include Numbers (0-9)</string>
+    <string name="include_symbols">Include Symbols (!@#$%)</string>
+    <string name="exclude_ambiguous">Exclude Ambiguous (0O1lI)</string>
+    <string name="regenerate">Regenerate</string>
+    <string name="use_password">Use This Password</string>
+    <string name="preset_easy">Easy to Type</string>
+    <string name="preset_secure">Maximum Security</string>
+    <string name="preset_pin">PIN Code</string>
+    <string name="password_strength">Password Strength</string>
+    <string name="strength_weak">Weak</string>
+    <string name="strength_fair">Fair</string>
+    <string name="strength_good">Good</string>
+    <string name="strength_strong">Strong</string>
+    <string name="strength_very_strong">Very Strong</string>
+    
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="security">Security</string>
+    <string name="enable_biometric">Enable Biometric Unlock</string>
+    <string name="auto_lock">Auto-lock</string>
+    <string name="auto_lock_immediately">Immediately</string>
+    <string name="auto_lock_1_min">After 1 minute</string>
+    <string name="auto_lock_5_min">After 5 minutes</string>
+    <string name="auto_lock_15_min">After 15 minutes</string>
+    <string name="clipboard_clear">Clear Clipboard</string>
+    <string name="clipboard_clear_30s">After 30 seconds</string>
+    <string name="clipboard_clear_1_min">After 1 minute</string>
+    <string name="clipboard_clear_never">Never</string>
+    <string name="backup_restore">Backup &amp; Restore</string>
+    <string name="create_backup">Create Backup</string>
+    <string name="restore_backup">Restore from Backup</string>
+    <string name="export_data">Export Data</string>
+    <string name="appearance">Appearance</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="dark_mode_system">Follow System</string>
+    <string name="dark_mode_light">Light</string>
+    <string name="dark_mode_dark">Dark</string>
+    <string name="about">About</string>
+    <string name="version">Version</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="change_master_password">Change Master Password</string>
+    <string name="logout">Lock Vault</string>
+    
+    <!-- Analytics -->
+    <string name="analytics">Security Analytics</string>
+    <string name="password_health">Password Health</string>
+    <string name="reused_passwords">Reused Passwords</string>
+    <string name="compromised_passwords">Compromised Passwords</string>
+    <string name="recommendations">Recommendations</string>
+    
+    <!-- Errors -->
+    <string name="error_generic">Something went wrong</string>
+    <string name="error_network">Network error. Please try again.</string>
+    <string name="error_encryption">Encryption error</string>
+    <string name="error_decryption">Decryption error</string>
+    <string name="error_biometric_not_available">Biometric not available on this device</string>
+    
+    <!-- Content Descriptions -->
+    <string name="cd_app_logo">PassMan Logo</string>
+    <string name="cd_toggle_password">Toggle password visibility</string>
+    <string name="cd_copy_password">Copy password</string>
+    <string name="cd_generate_password">Generate new password</string>
+    <string name="cd_favorite">Favorite</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_settings">Settings</string>
+    <string name="cd_add">Add new</string>
+    <string name="cd_back">Go back</string>
+    <string name="cd_more_options">More options</string>
+    
+    <!-- Additional Strings -->
+    <string name="app_tagline">All-in-One Security Solution</string>
+    <string name="category">Category</string>
+    <string name="enter_password">Enter password</string>
+    <string name="favorites_description">Quick access to your most important credentials</string>
+    <string name="generated_password">Generated Password</string>
+    <string name="password_options">Password Options</string>
+    <string name="uppercase_letters">Uppercase Letters</string>
+    <string name="lowercase_letters">Lowercase Letters</string>
+    <string name="numbers">Numbers</string>
+    <string name="symbols">Symbols</string>
+    <string name="avoid_ambiguous">Avoid Ambiguous</string>
+    <string name="avoid_ambiguous_desc">Exclude similar characters (0, O, l, 1, I)</string>
+    <string name="include_characters">Include Characters</string>
+    <string name="biometric_unlock">Biometric Unlock</string>
+    <string name="biometric_unlock_desc">Use fingerprint or face to unlock</string>
+    <string name="auto_lock_1min">After 1 minute</string>
+    <string name="auto_lock_5min">After 5 minutes</string>
+    <string name="auto_lock_15min">After 15 minutes</string>
+    <string name="auto_lock_30min">After 30 minutes</string>
+    <string name="clipboard_timeout">Clipboard Timeout</string>
+    <string name="clipboard_30sec">After 30 seconds</string>
+    <string name="change_master_password_desc">Update your vault master password</string>
+    <string name="export_data_desc">Export credentials to encrypted file</string>
+    <string name="import_data">Import Data</string>
+    <string name="import_data_desc">Import credentials from backup file</string>
+    <string name="system_default">System Default</string>
+    <string name="light_mode">Light</string>
+    <string name="danger_zone">Danger Zone</string>
+    <string name="delete_all_data">Delete All Data</string>
+    <string name="delete_all_data_desc">Permanently delete vault and all credentials</string>
+    <string name="delete_credential_title">Delete Credential?</string>
+    <string name="delete_credential_message">This action cannot be undone.</string>
+    <string name="share">Share</string>
+    <string name="choose_auto_lock">Choose Auto-Lock Time</string>
+    <string name="choose_theme">Choose Theme</string>
+    <string name="never">Never</string>
+    <string name="data">Data</string>
+    <string name="lock_vault">Lock Vault</string>
+    <string name="file_vault">File Vault</string>
+    
+    <!-- Notifications -->
+    <string name="notifications">Notifications</string>
+    <string name="notifications_desc">Enable push notifications</string>
+    <string name="security_alerts">Security Alerts</string>
+    <string name="security_alerts_desc">Get notified about weak passwords</string>
+    <string name="password_reminders">Password Reminders</string>
+    <string name="password_reminders_desc">Remind to update old passwords</string>
+    <string name="notification_weak_passwords_title">Weak Passwords Detected</string>
+    <string name="notification_weak_passwords_message">You have %1$d weak passwords. Tap to review.</string>
+    <string name="notification_old_passwords_title">Time to Update Passwords</string>
+    <string name="notification_old_passwords_message">You have %1$d passwords older than 90 days.</string>
+    <string name="notification_backup_title">Backup Reminder</string>
+    <string name="notification_backup_message">It\'s been a while since your last backup.</string>
+    <string name="notification_breach_title">Security Alert</string>
+    <string name="notification_breach_message">Some of your credentials may have been compromised.</string>
+    <string name="notification_channel_security">Security Alerts</string>
+    <string name="notification_channel_security_desc">Important security notifications</string>
+    <string name="notification_channel_reminders">Reminders</string>
+    <string name="notification_channel_reminders_desc">Password update reminders</string>
+    <string name="notification_channel_general">General</string>
+    <string name="notification_channel_general_desc">App notifications</string>
+    <string name="test_notification">Test Notification</string>
+    <string name="test_notification_desc">Send a test notification now</string>
+    <string name="test_notification_title">Test Notification</string>
+    <string name="test_notification_message">PassMan notifications are working correctly!</string>
+</resources>

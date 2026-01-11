@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base Theme -->
+    <style name="Theme.PassMan" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <!-- Secondary colors -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_variant</item>
+        <item name="colorOnSecondary">@color/white</item>
+        
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/background_light</item>
+        <item name="colorSurface">@color/surface_light</item>
+        <item name="colorSurfaceVariant">@color/surface_variant_light</item>
+        <item name="colorOnSurface">@color/text_primary_light</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary_light</item>
+        
+        <!-- Error colors -->
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
+        
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:navigationBarColor">@color/surface_light</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        
+        <!-- Ripple -->
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
+        
+        <!-- Action bar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        
+        <!-- Custom Attributes -->
+        <item name="cardBackgroundColor">@color/card_background_light</item>
+        <item name="cardStrokeColor">@color/card_stroke_light</item>
+        <item name="dividerColor">@color/divider_light</item>
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.PassMan.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/primary</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.PassMan</item>
+    </style>
+
+    <!-- Fullscreen Theme (for QR Scanner) -->
+    <style name="Theme.PassMan.FullScreen" parent="Theme.PassMan">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- Dialog Theme -->
+    <style name="Theme.PassMan.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Title</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.Dialog</item>
+    </style>
+
+    <style name="MaterialAlertDialog.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+    </style>
+
+    <style name="ShapeAppearance.Dialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <!-- Bottom Sheet Theme -->
+    <style name="Theme.PassMan.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.PassMan.BottomSheet</item>
+    </style>
+
+    <style name="Widget.PassMan.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.BottomSheet</item>
+        <item name="backgroundTint">@color/surface_light</item>
+    </style>
+
+    <style name="ShapeAppearance.BottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <!-- ==================== BUTTON STYLES ==================== -->
+
+    <!-- Primary Button -->
+    <style name="Widget.PassMan.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="backgroundTint">@color/secondary</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="elevation">4dp</item>
+        <item name="rippleColor">@color/ripple_dark</item>
+    </style>
+
+    <!-- Secondary/Outlined Button -->
+    <style name="Widget.PassMan.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="strokeColor">@color/primary</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="rippleColor">@color/ripple_light</item>
+    </style>
+
+    <!-- Text Button -->
+    <style name="Widget.PassMan.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="rippleColor">@color/ripple_light</item>
+    </style>
+
+    <!-- Icon Button -->
+    <style name="Widget.PassMan.Button.Icon" parent="Widget.Material3.Button.IconButton">
+        <item name="iconTint">@color/icon_primary_light</item>
+        <item name="iconSize">24dp</item>
+        <item name="rippleColor">@color/ripple_light</item>
+    </style>
+
+    <!-- FAB -->
+    <style name="Widget.PassMan.FAB" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">@color/secondary</item>
+        <item name="tint">@color/white</item>
+        <item name="elevation">8dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.FAB</item>
+    </style>
+
+    <style name="ShapeAppearance.FAB" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">18dp</item>
+    </style>
+
+    <!-- Extended FAB -->
+    <style name="Widget.PassMan.ExtendedFAB" parent="Widget.Material3.ExtendedFloatingActionButton.Primary">
+        <item name="backgroundTint">@color/secondary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="iconTint">@color/white</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <!-- ==================== INPUT STYLES ==================== -->
+
+    <!-- Text Input Layout -->
+    <style name="Widget.PassMan.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/selector_text_input_stroke</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="hintTextColor">@color/secondary</item>
+        <item name="android:textColorHint">@color/text_hint_light</item>
+        <item name="startIconTint">@color/icon_secondary_light</item>
+        <item name="endIconTint">@color/icon_secondary_light</item>
+        <item name="errorIconTint">@color/error</item>
+        <item name="cursorColor">@color/secondary</item>
+    </style>
+
+    <!-- Password Input Layout -->
+    <style name="Widget.PassMan.TextInputLayout.Password" parent="Widget.PassMan.TextInputLayout">
+        <item name="endIconMode">password_toggle</item>
+        <item name="endIconTint">@color/icon_secondary_light</item>
+    </style>
+
+    <!-- Text Input Edit Text -->
+    <style name="Widget.PassMan.TextInputEditText" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+
+    <!-- Search View -->
+    <style name="Widget.PassMan.SearchView" parent="Widget.Material3.SearchView">
+        <item name="android:background">@drawable/bg_search</item>
+        <item name="iconifiedByDefault">false</item>
+    </style>
+
+    <!-- ==================== CARD STYLES ==================== -->
+
+    <!-- Standard Card -->
+    <style name="Widget.PassMan.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/card_background_light</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="rippleColor">@color/ripple_light</item>
+    </style>
+
+    <!-- Outlined Card -->
+    <style name="Widget.PassMan.Card.Outlined" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/surface_light</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeColor">@color/card_stroke_light</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- Filled Card -->
+    <style name="Widget.PassMan.Card.Filled" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/surface_variant_light</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <!-- ==================== CHIP STYLES ==================== -->
+
+    <style name="Widget.PassMan.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/selector_chip_background</item>
+        <item name="android:textColor">@color/selector_chip_text</item>
+        <item name="chipCornerRadius">12dp</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/selector_chip_stroke</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+    </style>
+
+    <!-- Choice Chip (single selection) -->
+    <style name="Widget.PassMan.Chip.Choice" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/selector_chip_background</item>
+        <item name="android:textColor">@color/selector_chip_text</item>
+        <item name="chipCornerRadius">16dp</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/selector_chip_stroke</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="chipMinHeight">32dp</item>
+        <item name="checkedIconVisible">false</item>
+    </style>
+
+    <!-- Filter Chip (multi selection) -->
+    <style name="Widget.PassMan.Chip.Filter" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/selector_chip_background</item>
+        <item name="android:textColor">@color/selector_chip_text</item>
+        <item name="chipCornerRadius">16dp</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/selector_chip_stroke</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="chipMinHeight">32dp</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="checkedIcon">@drawable/ic_check</item>
+    </style>
+
+    <!-- ==================== BUTTON STYLES (Alternative) ==================== -->
+    
+    <style name="Widget.PassMan.Button" parent="Widget.PassMan.Button.Primary" />
+
+    <!-- ==================== TEXT STYLES ==================== -->
+
+    <!-- Base Text Appearance -->
+    <style name="TextAppearance.PassMan" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/poppins_regular</item>
+    </style>
+
+    <!-- Headline Large -->
+    <style name="TextAppearance.PassMan.HeadlineLarge" parent="TextAppearance.PassMan">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="lineHeight">40sp</item>
+    </style>
+
+    <!-- Headline Medium -->
+    <style name="TextAppearance.PassMan.HeadlineMedium" parent="TextAppearance.PassMan">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="lineHeight">32sp</item>
+    </style>
+
+    <!-- Headline Small -->
+    <style name="TextAppearance.PassMan.HeadlineSmall" parent="TextAppearance.PassMan">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="lineHeight">28sp</item>
+    </style>
+
+    <!-- Title Large -->
+    <style name="TextAppearance.PassMan.TitleLarge" parent="TextAppearance.PassMan">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="lineHeight">26sp</item>
+    </style>
+
+    <!-- Title Medium -->
+    <style name="TextAppearance.PassMan.TitleMedium" parent="TextAppearance.PassMan">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="lineHeight">24sp</item>
+    </style>
+
+    <!-- Title Small -->
+    <style name="TextAppearance.PassMan.TitleSmall" parent="TextAppearance.PassMan">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="lineHeight">20sp</item>
+    </style>
+
+    <!-- Body Large -->
+    <style name="TextAppearance.PassMan.BodyLarge" parent="TextAppearance.PassMan">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="lineHeight">24sp</item>
+    </style>
+
+    <!-- Body Medium -->
+    <style name="TextAppearance.PassMan.BodyMedium" parent="TextAppearance.PassMan">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary_light</item>
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="lineHeight">20sp</item>
+    </style>
+
+    <!-- Body Small -->
+    <style name="TextAppearance.PassMan.BodySmall" parent="TextAppearance.PassMan">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_secondary_light</item>
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="lineHeight">16sp</item>
+    </style>
+
+    <!-- Label Large -->
+    <style name="TextAppearance.PassMan.LabelLarge" parent="TextAppearance.PassMan">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- Label Medium -->
+    <style name="TextAppearance.PassMan.LabelMedium" parent="TextAppearance.PassMan">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_secondary_light</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <!-- Label Small -->
+    <style name="TextAppearance.PassMan.LabelSmall" parent="TextAppearance.PassMan">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/text_secondary_light</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- ==================== OTHER STYLES ==================== -->
+
+    <!-- Bottom Navigation -->
+    <style name="Widget.PassMan.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/surface_light</item>
+        <item name="itemIconTint">@color/selector_bottom_nav</item>
+        <item name="itemTextColor">@color/selector_bottom_nav</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.PassMan.BottomNav.ActiveIndicator</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <style name="Widget.PassMan.BottomNav.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/secondary_light</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.BottomNav.ActiveIndicator</item>
+    </style>
+
+    <style name="ShapeAppearance.BottomNav.ActiveIndicator" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <!-- Toolbar -->
+    <style name="Widget.PassMan.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextColor">@color/text_primary_light</item>
+        <item name="subtitleTextColor">@color/text_secondary_light</item>
+        <item name="navigationIconTint">@color/icon_primary_light</item>
+    </style>
+
+    <!-- Switch -->
+    <style name="Widget.PassMan.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="thumbTint">@color/selector_switch_thumb</item>
+        <item name="trackTint">@color/selector_switch_track</item>
+    </style>
+
+    <!-- Slider -->
+    <style name="Widget.PassMan.Slider" parent="Widget.Material3.Slider">
+        <item name="thumbColor">@color/secondary</item>
+        <item name="trackColorActive">@color/secondary</item>
+        <item name="trackColorInactive">@color/secondary_light</item>
+        <item name="tickColorActive">@color/white</item>
+        <item name="tickColorInactive">@color/secondary</item>
+        <item name="labelStyle">@style/Widget.PassMan.Slider.Label</item>
+    </style>
+
+    <style name="Widget.PassMan.Slider.Label" parent="Widget.Material3.Tooltip">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- Progress Indicator -->
+    <style name="Widget.PassMan.CircularProgress" parent="Widget.Material3.CircularProgressIndicator">
+        <item name="indicatorColor">@color/secondary</item>
+        <item name="trackColor">@color/secondary_light</item>
+        <item name="indicatorSize">48dp</item>
+        <item name="trackThickness">4dp</item>
+    </style>
+
+    <style name="Widget.PassMan.LinearProgress" parent="Widget.Material3.LinearProgressIndicator">
+        <item name="indicatorColor">@color/secondary</item>
+        <item name="trackColor">@color/secondary_light</item>
+        <item name="trackThickness">8dp</item>
+        <item name="trackCornerRadius">4dp</item>
+    </style>
+
+    <!-- Divider -->
+    <style name="Widget.PassMan.Divider" parent="Widget.Material3.MaterialDivider">
+        <item name="dividerColor">@color/divider_light</item>
+        <item name="dividerThickness">1dp</item>
+    </style>
+
+</resources>

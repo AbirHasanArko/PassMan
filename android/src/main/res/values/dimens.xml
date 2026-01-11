@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing_xxs">2dp</dimen>
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing_lg">16dp</dimen>
+    <dimen name="spacing_xl">20dp</dimen>
+    <dimen name="spacing_xxl">24dp</dimen>
+    <dimen name="spacing_xxxl">32dp</dimen>
+    <dimen name="spacing_huge">48dp</dimen>
+    <dimen name="spacing_giant">64dp</dimen>
+    
+    <!-- Corner Radius -->
+    <dimen name="radius_sm">8dp</dimen>
+    <dimen name="radius_md">12dp</dimen>
+    <dimen name="radius_lg">16dp</dimen>
+    <dimen name="radius_xl">20dp</dimen>
+    <dimen name="radius_xxl">24dp</dimen>
+    <dimen name="radius_round">50dp</dimen>
+    <!-- Alias for layouts -->
+    <dimen name="corner_medium">12dp</dimen>
+    
+    <!-- Icon Sizes -->
+    <dimen name="icon_xs">16dp</dimen>
+    <dimen name="icon_sm">20dp</dimen>
+    <dimen name="icon_md">24dp</dimen>
+    <dimen name="icon_lg">32dp</dimen>
+    <dimen name="icon_xl">48dp</dimen>
+    <dimen name="icon_xxl">64dp</dimen>
+    <dimen name="icon_giant">96dp</dimen>
+    
+    <!-- Button Heights -->
+    <dimen name="button_height_sm">40dp</dimen>
+    <dimen name="button_height_md">48dp</dimen>
+    <dimen name="button_height_lg">56dp</dimen>
+    
+    <!-- Input Heights -->
+    <dimen name="input_height">56dp</dimen>
+    <dimen name="input_height_multiline">120dp</dimen>
+    
+    <!-- Card -->
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_corner_radius">20dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    
+    <!-- Bottom Navigation -->
+    <dimen name="bottom_nav_height">80dp</dimen>
+    <dimen name="bottom_nav_icon_size">24dp</dimen>
+    
+    <!-- FAB -->
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="mini_fab_size">40dp</dimen>
+    
+    <!-- Toolbar -->
+    <dimen name="toolbar_height">64dp</dimen>
+    
+    <!-- Avatar -->
+    <dimen name="avatar_sm">32dp</dimen>
+    <dimen name="avatar_md">40dp</dimen>
+    <dimen name="avatar_lg">56dp</dimen>
+    <dimen name="avatar_xl">80dp</dimen>
+    
+    <!-- Credential Item -->
+    <dimen name="credential_item_height">80dp</dimen>
+    <dimen name="credential_icon_size">48dp</dimen>
+    
+    <!-- Security Score Circle -->
+    <dimen name="security_score_size">120dp</dimen>
+    <dimen name="security_score_stroke">12dp</dimen>
+    
+    <!-- Password Strength Bar -->
+    <dimen name="strength_bar_height">8dp</dimen>
+    
+    <!-- Slider -->
+    <dimen name="slider_thumb_size">28dp</dimen>
+    
+    <!-- Shimmer -->
+    <dimen name="shimmer_height">80dp</dimen>
+    
+    <!-- Screen margins -->
+    <dimen name="screen_margin_horizontal">20dp</dimen>
+    <dimen name="screen_margin_vertical">16dp</dimen>
+    
+    <!-- Dialog -->
+    <dimen name="dialog_min_width">280dp</dimen>
+    <dimen name="dialog_max_width">400dp</dimen>
+    
+    <!-- Bottom Sheet -->
+    <dimen name="bottom_sheet_peek_height">400dp</dimen>
+    
+    <!-- QR Code -->
+    <dimen name="qr_code_size">200dp</dimen>
+</resources>

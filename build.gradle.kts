@@ -6,6 +6,8 @@ group = "com.passman"
 version = "1.0.0"
 
 subprojects {
+    // Skip Android module - it has its own configuration
+    if (name == "android") return@subprojects
 
     apply(plugin = "java-library")
 

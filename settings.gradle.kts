@@ -5,8 +5,12 @@ rootProject.name = "PassMan"
 // --------------------------------------------------
 pluginManagement {
     repositories {
+        google()
         gradlePluginPortal()
         mavenCentral()
+    }
+    plugins {
+        id("com.android.application") version "8.13.2"
     }
 }
 
@@ -17,7 +21,9 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
     repositories {
+        google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
@@ -26,6 +32,7 @@ dependencyResolutionManagement {
 // --------------------------------------------------
 include("core")
 include("desktop")
+include("android")
 
 // --------------------------------------------------
 // Optional Gradle features

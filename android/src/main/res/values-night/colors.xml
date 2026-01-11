@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Override colors for dark mode -->
+    <!-- These override the "light" suffix colors to use dark values -->
+    
+    <!-- Background Colors - key overrides for dark mode -->
+    <color name="background_light">#0F172A</color>
+    <color name="surface_light">#1E293B</color>
+    <color name="surface_variant_light">#334155</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary_light">#F8FAFC</color>
+    <color name="text_secondary_light">#94A3B8</color>
+    <color name="text_hint_light">#64748B</color>
+    <color name="on_surface">#F8FAFC</color>
+    
+    <!-- Card & Surface Colors -->
+    <color name="card_background_light">#1E293B</color>
+    <color name="card_stroke_light">#334155</color>
+    
+    <!-- Divider Colors -->
+    <color name="divider_light">#334155</color>
+    
+    <!-- Icon Colors -->
+    <color name="icon_primary_light">#F8FAFC</color>
+    <color name="icon_secondary_light">#94A3B8</color>
+    
+    <!-- Input Field Colors -->
+    <color name="input_background_light">#1E293B</color>
+    <color name="input_stroke_light">#475569</color>
+    
+    <!-- Ripple Colors -->
+    <color name="ripple_light">#1FFFFFFF</color>
+    
+    <!-- Shimmer Loading -->
+    <color name="shimmer_base_light">#334155</color>
+    <color name="shimmer_highlight_light">#475569</color>
+    
+    <!-- Navigation Colors -->
+    <color name="nav_unselected_light">#94A3B8</color>
+</resources>

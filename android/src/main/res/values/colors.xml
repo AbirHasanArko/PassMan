@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Brand Colors - Deep Blue Gradient Theme -->
+    <color name="primary">#1E3A5F</color>
+    <color name="primary_dark">#152A45</color>
+    <color name="primary_light">#2D5A8A</color>
+    <color name="primary_variant">#0F2540</color>
+    
+    <!-- Secondary/Accent Colors - Teal Accent -->
+    <color name="secondary">#00BFA6</color>
+    <color name="secondary_dark">#00A896</color>
+    <color name="secondary_light">#5EEAD4</color>
+    <color name="secondary_variant">#00897B</color>
+    
+    <!-- Background Colors -->
+    <color name="background_light">#F8FAFC</color>
+    <color name="background_dark">#0F172A</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="surface_dark">#1E293B</color>
+    <color name="surface_variant_light">#F1F5F9</color>
+    <color name="surface_variant_dark">#334155</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary_light">#1E293B</color>
+    <color name="text_primary_dark">#F8FAFC</color>
+    <color name="text_secondary_light">#64748B</color>
+    <color name="text_secondary_dark">#94A3B8</color>
+    <color name="text_hint_light">#94A3B8</color>
+    <color name="text_hint_dark">#64748B</color>
+    <color name="on_surface">#1E293B</color>
+    
+    <!-- Status Colors -->
+    <color name="success">#10B981</color>
+    <color name="success_light">#D1FAE5</color>
+    <color name="warning">#F59E0B</color>
+    <color name="warning_light">#FEF3C7</color>
+    <color name="error">#EF4444</color>
+    <color name="error_light">#FEE2E2</color>
+    <color name="info">#3B82F6</color>
+    <color name="info_light">#DBEAFE</color>
+    
+    <!-- Password Strength Colors -->
+    <color name="strength_weak">#EF4444</color>
+    <color name="strength_fair">#F97316</color>
+    <color name="strength_good">#EAB308</color>
+    <color name="strength_strong">#22C55E</color>
+    <color name="strength_very_strong">#10B981</color>
+    
+    <!-- Card & Surface Colors -->
+    <color name="card_background_light">#FFFFFF</color>
+    <color name="card_background_dark">#1E293B</color>
+    <color name="card_stroke_light">#E2E8F0</color>
+    <color name="card_stroke_dark">#334155</color>
+    
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#1E3A5F</color>
+    <color name="gradient_center">#2D5A8A</color>
+    <color name="gradient_end">#00BFA6</color>
+    
+    <!-- Shimmer Loading -->
+    <color name="shimmer_base_light">#E2E8F0</color>
+    <color name="shimmer_highlight_light">#F8FAFC</color>
+    <color name="shimmer_base_dark">#334155</color>
+    <color name="shimmer_highlight_dark">#475569</color>
+    
+    <!-- Ripple Colors -->
+    <color name="ripple_light">#1F1E3A5F</color>
+    <color name="ripple_dark">#1FFFFFFF</color>
+    
+    <!-- Divider Colors -->
+    <color name="divider_light">#E2E8F0</color>
+    <color name="divider_dark">#334155</color>
+    
+    <!-- Icon Colors -->
+    <color name="icon_primary_light">#1E3A5F</color>
+    <color name="icon_primary_dark">#F8FAFC</color>
+    <color name="icon_secondary_light">#64748B</color>
+    <color name="icon_secondary_dark">#94A3B8</color>
+    
+    <!-- Input Field Colors -->
+    <color name="input_background_light">#F1F5F9</color>
+    <color name="input_background_dark">#1E293B</color>
+    <color name="input_stroke_light">#CBD5E1</color>
+    <color name="input_stroke_dark">#475569</color>
+    <color name="input_stroke_focused">#00BFA6</color>
+    
+    <!-- FAB Colors -->
+    <color name="fab_background">#00BFA6</color>
+    <color name="fab_icon">#FFFFFF</color>
+    
+    <!-- Navigation Colors -->
+    <color name="nav_selected">#00BFA6</color>
+    <color name="nav_unselected_light">#64748B</color>
+    <color name="nav_unselected_dark">#94A3B8</color>
+    
+    <!-- Category Badge Colors -->
+    <color name="badge_social">#E11D48</color>
+    <color name="badge_work">#2563EB</color>
+    <color name="badge_finance">#059669</color>
+    <color name="badge_entertainment">#7C3AED</color>
+    <color name="badge_shopping">#EA580C</color>
+    <color name="badge_other">#64748B</color>
+    <color name="favorite">#E11D48</color>
+    
+    <!-- Transparent Overlay -->
+    <color name="overlay_dark">#80000000</color>
+    <color name="overlay_light">#80FFFFFF</color>
+    
+    <!-- White/Black -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+</resources>

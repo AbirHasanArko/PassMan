@@ -579,7 +579,7 @@ database.pool.size=5
 
 **Developer**: Abir Hasan Arko
 
-PassMan Desktop provides a secure, professional password management solution for desktop users with enterprise-grade encryption and a user-friendly interface.
+PassMan Desktop provides a secure, professional password management and file vault solution for desktop users with enterprise-grade encryption and a user-friendly interface.
 
 ---
 

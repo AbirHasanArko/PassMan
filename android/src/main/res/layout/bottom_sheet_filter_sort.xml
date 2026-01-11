@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_lg"
+    android:background="@drawable/bg_bottom_sheet">
+
+    <!-- Handle Bar -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/spacing_lg"
+        android:background="@drawable/bg_handle_bar" />
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_and_sort"
+        android:textSize="20sp"
+        android:textColor="@color/text_primary_light"
+        android:fontFamily="@font/poppins_semibold"
+        android:layout_marginBottom="@dimen/spacing_lg" />
+
+    <!-- Sort Section -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sort_by"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary_light"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_marginTop="@dimen/spacing_md" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupSort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        app:singleSelection="true"
+        app:selectionRequired="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSortAZ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sort_a_z"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSortZA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sort_z_a"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSortRecent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sort_recent"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSortOldest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sort_oldest"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipSortStrength"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sort_strength"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Filter by Category -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_by_category"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary_light"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_marginTop="@dimen/spacing_xl" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        app:singleSelection="true"
+        app:selectionRequired="false">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCategoryAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_all"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCategorySocial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_social"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCategoryEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_email"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCategoryBanking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_banking"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCategoryShopping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_shopping"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCategoryWork"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_work"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipCategoryOther"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/category_other"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Filter by Password Strength -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_by_strength"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary_light"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_marginTop="@dimen/spacing_xl" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupStrength"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        app:singleSelection="true"
+        app:selectionRequired="false">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipStrengthAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/strength_all"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipStrengthWeak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/strength_weak"
+            app:chipIconTint="@color/strength_weak"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipStrengthFair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/strength_fair"
+            app:chipIconTint="@color/strength_fair"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipStrengthGood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/strength_good"
+            app:chipIconTint="@color/strength_good"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipStrengthStrong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/strength_strong"
+            app:chipIconTint="@color/strength_strong"
+            style="@style/Widget.PassMan.Chip.Choice" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Additional Filters -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/additional_filters"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary_light"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_marginTop="@dimen/spacing_xl" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupAdditional"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        app:singleSelection="false">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipOldPasswords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_old_passwords"
+            app:checkedIconVisible="true"
+            style="@style/Widget.PassMan.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipReused"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_reused"
+            app:checkedIconVisible="true"
+            style="@style/Widget.PassMan.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipBreached"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_breached"
+            app:chipIconTint="@color/error"
+            app:checkedIconVisible="true"
+            style="@style/Widget.PassMan.Chip.Filter" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/spacing_xxl"
+        android:gravity="end">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reset"
+            style="@style/Widget.PassMan.Button.Text" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/apply"
+            android:layout_marginStart="@dimen/spacing_md"
+            style="@style/Widget.PassMan.Button" />
+
+    </LinearLayout>
+
+</LinearLayout>
