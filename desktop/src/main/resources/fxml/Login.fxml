@@ -26,7 +26,7 @@
                 </font>
             </Label>
 
-            <Label styleClass="subtitle" text="Secure Password Manager">
+            <Label styleClass="subtitle" text="All-in-One Security Solution">
                 <font>
                     <Font size="14" />
                 </font>
@@ -58,7 +58,7 @@
             <padding>
                 <Insets bottom="10" top="10" />
             </padding>
-            <Label text="PassMan v1.0.0 | © 2025 | End-to-End Encrypted" />
+            <Label text="PassMan v1.0.0 | © 2026 | End-to-End Encrypted" />
         </HBox>
     </bottom>
 

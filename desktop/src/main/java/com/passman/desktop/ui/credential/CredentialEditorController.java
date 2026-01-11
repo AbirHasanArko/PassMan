@@ -4,6 +4,7 @@ import com.passman.core.db.DatabaseManager;
 import com.passman.core.model.Credential;
 import com.passman.core.repository.CredentialRepositoryImpl;
 import com.passman.core.services.EncryptionServiceImpl;
+import com.passman.core.services.PasswordStrengthService;
 import com.passman.desktop.DialogUtils;
 import com.passman.desktop.SessionManager;
 
@@ -33,12 +34,14 @@ public class CredentialEditorController {
 
     @FXML private ProgressBar strengthBar;
     @FXML private Label strengthLabel;
+    @FXML private Label warningLabel;
 
     private boolean passwordVisible = false;
 
     private Credential credential;
     private final CredentialRepositoryImpl repository;
     private final EncryptionServiceImpl encryptionService;
+    private final PasswordStrengthService passwordStrengthService;
 
     /* =======================
        Password generator
@@ -54,6 +57,7 @@ public class CredentialEditorController {
         DatabaseManager dbManager = DatabaseManager.getInstance();
         this.repository = new CredentialRepositoryImpl(dbManager);
         this.encryptionService = new EncryptionServiceImpl();
+        this.passwordStrengthService = new PasswordStrengthService();
     }
 
     @FXML
@@ -66,6 +70,23 @@ public class CredentialEditorController {
         passwordTextField.textProperty().addListener((obs, o, n) -> {
             if (passwordVisible) updateStrengthIndicator(n);
         });
+
+        // Re-evaluate password strength when username or email changes
+        usernameField.textProperty().addListener((obs, o, n) -> {
+            String password = passwordVisible ? passwordTextField.getText() : passwordField.getText();
+            updateStrengthIndicator(password);
+        });
+
+        emailField.textProperty().addListener((obs, o, n) -> {
+            String password = passwordVisible ? passwordTextField.getText() : passwordField.getText();
+            updateStrengthIndicator(password);
+        });
+
+        // Initialize warning label visibility
+        if (warningLabel != null) {
+            warningLabel.setVisible(false);
+            warningLabel.setManaged(false);
+        }
     }
 
     public void setCredential(Credential credential) {
@@ -229,16 +250,22 @@ public class CredentialEditorController {
             strengthBar.setProgress(0);
             strengthLabel.setText("Weak");
             strengthLabel.setStyle("-fx-text-fill: #dc3545;");
+            hideWarning();
             return;
         }
 
-        int score = 0;
-        if (password.length() >= 8) score += 25;
-        if (password.length() >= 12) score += 25;
-        if (password.matches(".*[A-Z].*")) score += 15;
-        if (password.matches(".*[a-z].*")) score += 15;
-        if (password.matches(".*[0-9].*")) score += 10;
-        if (password.matches(".*[!@#$%^&*].*")) score += 10;
+        // Build personal info context from current form fields
+        PasswordStrengthService.PersonalInfoContext context = new PasswordStrengthService.PersonalInfoContext();
+        if (usernameField != null && usernameField.getText() != null) {
+            context.setUsername(usernameField.getText());
+        }
+        if (emailField != null && emailField.getText() != null) {
+            context.setEmail(emailField.getText());
+        }
+
+        // Calculate strength with personal info detection
+        PasswordStrengthService.StrengthResult result = passwordStrengthService.calculateStrength(password, context);
+        int score = result.getScore();
 
         strengthBar.setProgress(score / 100.0);
 
@@ -252,18 +279,43 @@ public class CredentialEditorController {
             strengthLabel.setText("Weak");
             strengthLabel.setStyle("-fx-text-fill: #dc3545;");
         }
+
+        // Show warnings if personal info detected
+        if (result.hasWarnings()) {
+            showWarning(String.join("\n", result.getWarnings()));
+        } else {
+            hideWarning();
+        }
+    }
+
+    private void showWarning(String message) {
+        if (warningLabel != null) {
+            warningLabel.setText(message);
+            warningLabel.setStyle("-fx-text-fill: #ff6600; -fx-font-weight: bold;");
+            warningLabel.setVisible(true);
+            warningLabel.setManaged(true);
+        }
+    }
+
+    private void hideWarning() {
+        if (warningLabel != null) {
+            warningLabel.setVisible(false);
+            warningLabel.setManaged(false);
+        }
     }
 
     private int calculatePasswordStrengthScore(String password) {
         if (password == null || password.isEmpty()) return 0;
 
-        int score = 0;
-        if (password.length() >= 8) score += 25;
-        if (password.length() >= 12) score += 25;
-        if (password.matches(".*[A-Z].*")) score += 15;
-        if (password.matches(".*[a-z].*")) score += 15;
-        if (password.matches(".*[0-9].*")) score += 10;
-        if (password.matches(".*[!@#$%^&*].*")) score += 10;
-        return score;
+        // Build context for current credential
+        PasswordStrengthService.PersonalInfoContext context = new PasswordStrengthService.PersonalInfoContext();
+        if (usernameField != null && usernameField.getText() != null) {
+            context.setUsername(usernameField.getText());
+        }
+        if (emailField != null && emailField.getText() != null) {
+            context.setEmail(emailField.getText());
+        }
+
+        return passwordStrengthService.getScore(password, context);
     }
 }

@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -33,13 +35,35 @@
                     <Insets bottom="10" left="20" right="20" top="10" />
                 </padding>
 
-                <TextField fx:id="searchField" prefWidth="300" promptText="🔍 Search passwords..." styleClass="search-field" />
+                <TextField fx:id="searchField" prefWidth="250" promptText="🔍 Search passwords..." styleClass="search-field" />
+                <ComboBox fx:id="searchScopeCombo" prefWidth="130" promptText="Search in..." onAction="#handleSearchScopeChange" />
 
                 <Region HBox.hgrow="ALWAYS" />
 
                 <Button fx:id="addButton" onAction="#handleAddCredential" styleClass="action-button" text="➕ Add" />
                 <Button onAction="#handleGeneratePassword" styleClass="action-button" text="🎲 Generate" />
                 <Button onAction="#handleBackup" styleClass="action-button" text="💾 Backup" />
+            </HBox>
+
+            <!-- Advanced Filter Panel -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="filter-panel">
+                <padding>
+                    <Insets bottom="10" left="20" right="20" top="5" />
+                </padding>
+
+                <Label text="Filter:" styleClass="filter-label" />
+
+                <ComboBox fx:id="ageFilterCombo" promptText="Age" prefWidth="120" onAction="#handleFilterChange" />
+                <ComboBox fx:id="strengthFilterCombo" promptText="Strength" prefWidth="120" onAction="#handleFilterChange" />
+                <CheckBox fx:id="favoritesOnlyCheck" text="⭐ Favorites Only" onAction="#handleFilterChange" />
+                <CheckBox fx:id="breachedOnlyCheck" text="⚠️ Breached Only" onAction="#handleFilterChange" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Label text="Sort:" styleClass="filter-label" />
+                <ComboBox fx:id="sortByCombo" promptText="Sort by" prefWidth="150" onAction="#handleSortChange" />
+
+                <Button text="Clear Filters" onAction="#handleClearFilters" styleClass="secondary-button" />
             </HBox>
         </VBox>
     </top>
@@ -55,8 +79,6 @@
 
                     <Label styleClass="sidebar-header" text="CATEGORIES" />
                     <Button maxWidth="Infinity" styleClass="sidebar-button" text="🏠 All Passwords" />
-                    <Button maxWidth="Infinity" styleClass="sidebar-button" text="⭐ Favorites" />
-                    <Button maxWidth="Infinity" styleClass="sidebar-button" text="🔒 Passwords" />
                     <Button maxWidth="Infinity" onAction="#handleNotes" styleClass="sidebar-button" text="📝 Secure Notes" />
                     <Button maxWidth="Infinity" onAction="#handleIdentityCards" styleClass="sidebar-button" text="🆔 Identity Cards" />
                     <!-- Update the File Vaults button -->
@@ -65,10 +87,9 @@
                     <Separator />
 
                     <Label styleClass="sidebar-header" text="FEATURES" />
-                    <Button maxWidth="Infinity" styleClass="sidebar-button" text="📊 Analytics" />
                     <Button maxWidth="Infinity" onAction="#handleGraph" styleClass="sidebar-button" text="📈 Graph View" />
                     <Button maxWidth="Infinity" onAction="#handleQuiz" styleClass="sidebar-button" text="🎮 Quiz" />
-                    <Button maxWidth="Infinity" onAction="#handleQRShare" styleClass="sidebar-button" text="📱 QR Share" />
+                    <Button maxWidth="Infinity" onAction="#handleQRShare" styleClass="sidebar-button" text="📱 QR Sharing" />
                     <Button maxWidth="Infinity" onAction="#handleAdmin" styleClass="sidebar-button" text="⚙👤 Admin" />
                 </VBox>
             </left>
@@ -79,15 +100,16 @@
                         <Insets bottom="20" left="20" right="20" top="20" />
                     </padding>
 
-                    <Label styleClass="section-title" text="Your Passwords" />
+                    <Label styleClass="section-title" text="My Password" />
 
                     <TableView fx:id="credentialsTable" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn prefWidth="200" text="Title" />
-                            <TableColumn prefWidth="150" text="Username" />
-                            <TableColumn prefWidth="200" text="URL" />
-                            <TableColumn prefWidth="100" text="Age" />
-                            <TableColumn prefWidth="100" text="Strength" />
+                            <TableColumn prefWidth="180" text="Title" />
+                            <TableColumn prefWidth="130" text="Username" />
+                            <TableColumn prefWidth="150" text="Email" />
+                            <TableColumn prefWidth="150" text="URL" />
+                            <TableColumn prefWidth="80" text="Age" />
+                            <TableColumn prefWidth="80" text="Strength" />
                         </columns>
                     </TableView>
                 </VBox>

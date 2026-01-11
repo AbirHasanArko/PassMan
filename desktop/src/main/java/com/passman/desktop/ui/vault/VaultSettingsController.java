@@ -217,6 +217,45 @@ public class VaultSettingsController {
     }
 
     @FXML
+    private void handleDeleteVault() {
+        if (selectedVault == null) {
+            DialogUtils.showWarning("No Selection", "Select Vault",
+                    "Please select a vault to delete.");
+            return;
+        }
+
+        boolean confirm = DialogUtils.showConfirmation(
+                "Delete Vault",
+                "Are you sure you want to delete '" + selectedVault.getVaultName() + "'?",
+                "This will permanently delete the vault and ALL files inside it. This action cannot be undone."
+        );
+
+        if (confirm) {
+            // Double confirmation for safety
+            boolean doubleConfirm = DialogUtils.showConfirmation(
+                    "Final Confirmation",
+                    "This is irreversible!",
+                    "Type 'DELETE' mentally and click OK to confirm deletion of vault '" + selectedVault.getVaultName() + "'."
+            );
+
+            if (doubleConfirm) {
+                try {
+                    vaultService.deleteVault(selectedVault.getId());
+
+                    DialogUtils.showInfo("Success", "Vault Deleted",
+                            "The vault and all its files have been permanently deleted.");
+
+                    handleClear();
+                    loadAllVaults();
+
+                } catch (Exception e) {
+                    DialogUtils.showError("Error", "Failed to delete vault", e.getMessage());
+                }
+            }
+        }
+    }
+
+    @FXML
     private void handleClose() {
         Stage stage = (Stage) vaultNameField.getScene().getWindow();
         stage.close();

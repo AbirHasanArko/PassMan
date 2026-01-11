@@ -1,9 +1,10 @@
 package com.passman.desktop.ui.admin;
 
-import com.passman.core.crypto. PBKDF2KeyDerivation;
+import com.passman.core.crypto.PBKDF2KeyDerivation;
 import com.passman.core.db.DatabaseManager;
-import com. passman.core.db.dao.UserDAO;
+import com.passman.core.db.dao.UserDAO;
 import com.passman.core.model.User;
+import com.passman.core.services.PasswordStrengthService;
 import com.passman.desktop.DialogUtils;
 import com.passman.desktop.MainApp;
 import com.passman.desktop.SessionManager;
@@ -177,14 +178,18 @@ public class AdminPanelController {
 
             String sql = "SELECT * FROM audit_log ORDER BY timestamp DESC LIMIT 100";
 
-            try (Connection conn = dbManager.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery(sql)) {
+            Connection conn = dbManager.getConnection();
+            Statement stmt = null;
+            ResultSet rs = null;
+
+            try {
+                stmt = conn.createStatement();
+                rs = stmt.executeQuery(sql);
 
                 javafx.collections.ObservableList<String> logs =
                         javafx.collections.FXCollections.observableArrayList();
 
-                DateTimeFormatter formatter = DateTimeFormatter. ofPattern("yyyy-MM-dd HH:mm:ss");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
                 while (rs.next()) {
                     String timestamp = rs.getObject("timestamp", LocalDateTime.class).format(formatter);
@@ -201,6 +206,9 @@ public class AdminPanelController {
                 }
 
                 auditLogListView.setItems(logs);
+            } finally {
+                if (rs != null) try { rs.close(); } catch (Exception e) { }
+                if (stmt != null) try { stmt.close(); } catch (Exception e) { }
             }
 
         } catch (Exception e) {
@@ -218,7 +226,7 @@ public class AdminPanelController {
             licenseTextArea.setText("""
                 MIT License
                 
-                Copyright (c) 2024 PassMan
+                Copyright (c) 2026 PassMan
                 
                 Permission is hereby granted, free of charge, to any person obtaining a copy
                 of this software and associated documentation files (the "Software"), to deal
@@ -373,9 +381,13 @@ public class AdminPanelController {
         if (confirm) {
             try {
                 // Run VACUUM command
-                try (Connection conn = dbManager.getConnection();
-                     Statement stmt = conn.createStatement()) {
+                Connection conn = dbManager.getConnection();
+                Statement stmt = null;
+                try {
+                    stmt = conn.createStatement();
                     stmt.execute("VACUUM");
+                } finally {
+                    if (stmt != null) try { stmt.close(); } catch (Exception e) { }
                 }
 
                 loadDatabaseStatistics();
@@ -384,7 +396,7 @@ public class AdminPanelController {
 
             } catch (Exception e) {
                 DialogUtils.showError("Error", "Failed to compact database", e.getMessage());
-                e. printStackTrace();
+                e.printStackTrace();
             }
         }
     }
@@ -403,16 +415,20 @@ public class AdminPanelController {
     private void handleClearAuditLog() {
         boolean confirm = DialogUtils.showConfirmation(
                 "Clear Audit Log",
-                "Delete all audit records? ",
+                "Delete all audit records?",
                 "This will permanently delete all audit log entries.\n\n" +
-                        "This action cannot be undone.  Continue?"
+                        "This action cannot be undone. Continue?"
         );
 
         if (confirm) {
             try {
-                try (Connection conn = dbManager.getConnection();
-                     Statement stmt = conn.createStatement()) {
+                Connection conn = dbManager.getConnection();
+                Statement stmt = null;
+                try {
+                    stmt = conn.createStatement();
                     stmt.execute("DELETE FROM audit_log");
+                } finally {
+                    if (stmt != null) try { stmt.close(); } catch (Exception e) { }
                 }
 
                 loadAuditLog();
@@ -467,6 +483,34 @@ public class AdminPanelController {
     }
 
     @FXML
+    private void handleEmailLink() {
+        openUrl("mailto:abirhasanarko2004@gmail.com");
+    }
+
+    @FXML
+    private void handleGithubLink() {
+        openUrl("https://github.com/AbirHasanArko");
+    }
+
+    @FXML
+    private void handleLinkedinLink() {
+        openUrl("https://www.linkedin.com/in/abirhasanarko/");
+    }
+
+    @FXML
+    private void handleTwitterLink() {
+        openUrl("https://x.com/AbirHasanArko");
+    }
+
+    private void openUrl(String url) {
+        try {
+            java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+        } catch (Exception e) {
+            DialogUtils.showError("Error", "Could not open link", e.getMessage());
+        }
+    }
+
+    @FXML
     private void handleBackToDashboard() {
         MainApp.getSceneManager().switchScene("Dashboard");
     }
@@ -483,14 +527,10 @@ public class AdminPanelController {
             return;
         }
 
-        int score = 0;
-        if (password. length() >= 8) score += 20;
-        if (password.length() >= 12) score += 20;
-        if (password.length() >= 16) score += 10;
-        if (password.matches(".*[A-Z].*")) score += 15;
-        if (password.matches(".*[a-z].*")) score += 15;
-        if (password.matches(".*[0-9].*")) score += 10;
-        if (password.matches(".*[! @#$%^&*()_+\\-=\\[\\]{}|;: ,.<>?].*")) score += 10;
+        // Use PasswordStrengthService for consistent scoring
+        PasswordStrengthService strengthService = new PasswordStrengthService();
+        PasswordStrengthService.StrengthResult result = strengthService.calculateStrength(password);
+        int score = result.getScore();
 
         passwordStrengthBar.setProgress(score / 100.0);
 
@@ -498,7 +538,7 @@ public class AdminPanelController {
             passwordStrengthLabel.setText("Strong");
             passwordStrengthLabel.setStyle("-fx-text-fill: #28a745;");
         } else if (score >= 60) {
-            passwordStrengthLabel. setText("Good");
+            passwordStrengthLabel.setText("Good");
             passwordStrengthLabel.setStyle("-fx-text-fill: #2ECC71;");
         } else if (score >= 40) {
             passwordStrengthLabel.setText("Medium");

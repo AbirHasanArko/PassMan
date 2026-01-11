@@ -61,6 +61,7 @@
                     <Button text="Create Vault" onAction="#handleCreateVault" styleClass="primary-button"/>
                     <Button text="Set Password" onAction="#handleSetPassword" styleClass="action-button"/>
                     <Button text="Remove Password" onAction="#handleRemovePassword" styleClass="warning-button"/>
+                    <Button text="Delete Vault" onAction="#handleDeleteVault" styleClass="danger-button"/>
                 </HBox>
 
                 <Region VBox.vgrow="ALWAYS"/>

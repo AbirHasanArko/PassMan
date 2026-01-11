@@ -230,7 +230,7 @@
 
                         <Separator maxWidth="400"/>
 
-                        <Label text="Secure Password Manager" styleClass="section-label"/>
+                        <Label text="All-in-One Security Solution" styleClass="section-label"/>
                         <Label text="End-to-End Encrypted | Zero-Knowledge Architecture"
                                styleClass="status-label" wrapText="true" maxWidth="400" textAlignment="CENTER"/>
 
@@ -246,9 +246,25 @@
 
                         <Separator maxWidth="400"/>
 
+                        <!-- Developer Section -->
+                        <VBox spacing="10" alignment="CENTER" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 10;">
+                            <Label text="👨‍💻 Developer" styleClass="section-label"/>
+                            <Label text="Abir Hasan Arko" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Hyperlink text="abirhasanarko2004@gmail.com" onAction="#handleEmailLink"/>
+                            <HBox spacing="20" alignment="CENTER">
+                                <Hyperlink text="GitHub" onAction="#handleGithubLink"/>
+                                <Hyperlink text="LinkedIn" onAction="#handleLinkedinLink"/>
+                                <Hyperlink text="X (Twitter)" onAction="#handleTwitterLink"/>
+                            </HBox>
+                        </VBox>
+
+                        <Separator maxWidth="400"/>
+
                         <VBox spacing="10" alignment="CENTER">
                             <Button text="Check for Updates" onAction="#handleCheckForUpdates" styleClass="action-button"/>
                         </VBox>
+
+                        <Label text="© 2026 PassMan. All rights reserved." style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
 
                         <Separator maxWidth="400"/>
 

@@ -14,7 +14,7 @@
                 <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
             <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
-            <Label text="📱 QR Code Password Sharing" styleClass="page-title"/>
+            <Label text="📱 QR Code Sharing" styleClass="page-title"/>
         </HBox>
     </top>
 
@@ -25,58 +25,152 @@
                     <Insets top="30" right="30" bottom="30" left="30"/>
                 </padding>
 
-                <!-- Warning Banner -->
-                <HBox spacing="10" style="-fx-background-color: #FFF3CD; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #FFC107; -fx-border-width: 2; -fx-border-radius: 8;" maxWidth="600">
-                    <Label text="⚠️" style="-fx-font-size: 24px;"/>
-                    <VBox spacing="5">
-                        <Label text="Security Warning" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-                        <Label text="QR codes can be scanned by anyone. Only use in secure, private locations. The password will be encoded but not encrypted."
-                               wrapText="true" styleClass="status-label"/>
-                    </VBox>
-                </HBox>
+                <!-- Tab Selection -->
+                <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" maxWidth="700">
 
-                <!-- Input Section -->
-                <VBox spacing="15" maxWidth="500" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
-                    <Label text="Password to Share" styleClass="section-label"/>
-                    <TextField fx:id="passwordField" promptText="Enter password"/>
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <CheckBox fx:id="noExpiryCheckbox" text="No expiry"/>
-                        <Label text="Expires in: "/>
-                        <Spinner fx:id="expirySpinner" prefWidth="100">
-                            <valueFactory>
-                                <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="60" initialValue="15"/>
-                            </valueFactory>
-                        </Spinner>
-                        <Label text="minutes"/>
-                    </HBox>
-                    <HBox spacing="10" alignment="CENTER">
-                        <Button text="Generate QR Code" onAction="#handleGenerate" styleClass="primary-button"/>
-                        <Button text="Clear" onAction="#handleClear" styleClass="secondary-button"/>
-                    </HBox>
-                </VBox>
+                    <!-- Tab 1: Generate QR Code -->
+                    <Tab text="📤 Share Credential">
+                        <VBox spacing="20" alignment="CENTER">
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20"/>
+                            </padding>
 
-                <!-- QR Code Display -->
-                <VBox spacing="10" alignment="CENTER" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
-                    <Label text="QR Code" styleClass="section-label"/>
-                    <StackPane style="-fx-background-color: #F5F5F5; -fx-padding: 20; -fx-background-radius: 8;" prefWidth="450" prefHeight="450">
-                        <ImageView fx:id="qrCodeImageView" fitWidth="400" fitHeight="400" preserveRatio="true"/>
-                        <Label fx:id="noQrCodeLabel" text="No QR code generated yet" styleClass="status-label" visible="true"/>
-                    </StackPane>
-                    <Label fx:id="statusLabel" text="" wrapText="true"/>
-                    <Button fx:id="saveButton" text="💾 Save QR Code" onAction="#handleSaveQRCode" styleClass="action-button" disable="true"/>
-                </VBox>
+                            <!-- Warning Banner -->
+                            <HBox spacing="10" style="-fx-background-color: #FFF3CD; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #FFC107; -fx-border-width: 2; -fx-border-radius: 8;" maxWidth="600">
+                                <Label text="⚠️" style="-fx-font-size: 24px;"/>
+                                <VBox spacing="5">
+                                    <Label text="Security Warning" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                                    <Label text="QR codes can be scanned by anyone. Only use in secure, private locations. The credential data will be encoded in the QR code."
+                                           wrapText="true" styleClass="status-label"/>
+                                </VBox>
+                            </HBox>
 
-                <!-- Instructions -->
-                <VBox spacing="10" maxWidth="600" style="-fx-background-color: #E3F2FD; -fx-padding: 15; -fx-background-radius: 8;">
-                    <Label text="How to Use:" style="-fx-font-weight: bold;"/>
-                    <VBox spacing="3">
-                        <Label text="1. Enter the password you want to share" styleClass="status-label"/>
-                        <Label text="2. Set an expiry time (optional)" styleClass="status-label"/>
-                        <Label text="3. Click 'Generate QR Code'" styleClass="status-label"/>
-                        <Label text="4. Save the image or let someone scan it directly" styleClass="status-label"/>
-                        <Label text="5. The recipient can scan the QR code to get the password" styleClass="status-label"/>
-                    </VBox>
-                </VBox>
+                            <!-- Credential Selector -->
+                            <VBox spacing="10" maxWidth="500" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                                <Label text="Select Credential to Share" styleClass="section-label"/>
+                                <ComboBox fx:id="credentialCombo" maxWidth="Infinity" promptText="Choose a credential..."/>
+
+                                <Separator/>
+
+                                <Label text="Or enter manually:" styleClass="section-label"/>
+                                <GridPane hgap="10" vgap="10">
+                                    <Label text="Title:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="titleField" promptText="e.g., Gmail Account" GridPane.rowIndex="0" GridPane.columnIndex="1" HBox.hgrow="ALWAYS"/>
+
+                                    <Label text="Username:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="usernameField" promptText="e.g., john_doe" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                    <Label text="Email:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="emailField" promptText="e.g., john@example.com" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                                    <Label text="Password:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                    <PasswordField fx:id="passwordField" promptText="Enter password" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                                    <Label text="URL:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="urlField" promptText="e.g., https://gmail.com" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                                    <columnConstraints>
+                                        <ColumnConstraints minWidth="80"/>
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="300"/>
+                                    </columnConstraints>
+                                </GridPane>
+
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Button text="🔲 Generate QR Code" onAction="#handleGenerateCredentialQR" styleClass="primary-button"/>
+                                    <Button text="Clear" onAction="#handleClear" styleClass="secondary-button"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- QR Code Display -->
+                            <VBox spacing="10" alignment="CENTER" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                                <Label text="Generated QR Code" styleClass="section-label"/>
+                                <StackPane style="-fx-background-color: #F5F5F5; -fx-padding: 20; -fx-background-radius: 8;" prefWidth="450" prefHeight="450">
+                                    <ImageView fx:id="qrCodeImageView" fitWidth="400" fitHeight="400" preserveRatio="true"/>
+                                    <Label fx:id="noQrCodeLabel" text="No QR code generated yet" styleClass="status-label" visible="true"/>
+                                </StackPane>
+                                <Label fx:id="statusLabel" text="" wrapText="true"/>
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Button fx:id="saveButton" text="💾 Save QR Code" onAction="#handleSaveQRCode" styleClass="action-button" disable="true"/>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                    </Tab>
+
+                    <!-- Tab 2: Scan QR Code -->
+                    <Tab text="📥 Import from QR">
+                        <VBox spacing="20" alignment="CENTER">
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20"/>
+                            </padding>
+
+                            <!-- Info Banner -->
+                            <HBox spacing="10" style="-fx-background-color: #E3F2FD; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #2196F3; -fx-border-width: 2; -fx-border-radius: 8;" maxWidth="600">
+                                <Label text="ℹ️" style="-fx-font-size: 24px;"/>
+                                <VBox spacing="5">
+                                    <Label text="Import Credential" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                                    <Label text="Load a QR code image generated by PassMan (Android or Desktop) to import the credential."
+                                           wrapText="true" styleClass="status-label"/>
+                                </VBox>
+                            </HBox>
+
+                            <!-- Scan Section -->
+                            <VBox spacing="15" maxWidth="500" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                                <Label text="Load QR Code Image" styleClass="section-label"/>
+
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Button text="📁 Choose Image File..." onAction="#handleLoadQRImage" styleClass="primary-button"/>
+                                    <Button text="📋 Paste from Clipboard" onAction="#handlePasteQRImage" styleClass="secondary-button"/>
+                                </HBox>
+
+                                <StackPane fx:id="scanPreviewPane" style="-fx-background-color: #F5F5F5; -fx-padding: 20; -fx-background-radius: 8;" prefWidth="300" prefHeight="300">
+                                    <ImageView fx:id="scanPreviewImageView" fitWidth="280" fitHeight="280" preserveRatio="true"/>
+                                    <Label fx:id="noScanImageLabel" text="No image loaded" styleClass="status-label" visible="true"/>
+                                </StackPane>
+
+                                <Label fx:id="scanStatusLabel" text="" wrapText="true" style="-fx-text-fill: #666;"/>
+                            </VBox>
+
+                            <!-- Parsed Credential Preview -->
+                            <VBox fx:id="parsedCredentialBox" spacing="10" maxWidth="500" visible="false" managed="false"
+                                  style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                                <Label text="✅ Credential Found" styleClass="section-label" style="-fx-text-fill: #27AE60;"/>
+
+                                <GridPane hgap="10" vgap="8">
+                                    <Label text="Title:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                    <Label fx:id="parsedTitleLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                                    <Label text="Username:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <Label fx:id="parsedUsernameLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                    <Label text="Email:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                    <Label fx:id="parsedEmailLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                                    <Label text="URL:" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                    <Label fx:id="parsedUrlLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                                    <Label text="Password:" style="-fx-font-weight: bold;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                                    <Label fx:id="parsedPasswordLabel" text="••••••••" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                                </GridPane>
+
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Button text="➕ Import Credential" onAction="#handleImportCredential" styleClass="primary-button"/>
+                                    <Button text="Cancel" onAction="#handleCancelImport" styleClass="secondary-button"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- Instructions -->
+                            <VBox spacing="10" maxWidth="600" style="-fx-background-color: #F5F5F5; -fx-padding: 15; -fx-background-radius: 8;">
+                                <Label text="How to Import:" style="-fx-font-weight: bold;"/>
+                                <VBox spacing="3">
+                                    <Label text="1. Get a QR code image from PassMan Android or save one from this app" styleClass="status-label"/>
+                                    <Label text="2. Click 'Choose Image File...' or paste from clipboard" styleClass="status-label"/>
+                                    <Label text="3. Review the credential details" styleClass="status-label"/>
+                                    <Label text="4. Click 'Import Credential' to save it to your vault" styleClass="status-label"/>
+                                </VBox>
+                            </VBox>
+                        </VBox>
+                    </Tab>
+                </TabPane>
             </VBox>
         </ScrollPane>
     </center>

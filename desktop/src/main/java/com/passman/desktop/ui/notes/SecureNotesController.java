@@ -1,42 +1,82 @@
 package com.passman.desktop.ui.notes;
 
 import com.passman.core.db.DatabaseManager;
-import com. passman.core.model.SecureNote;
-import com.passman. core.repository.SecureNotesRepositoryImpl;
+import com.passman.core.model.SecureNote;
+import com.passman.core.repository.SecureNotesRepositoryImpl;
 import com.passman.core.services.SecureNotesService;
-import com.passman. desktop.DialogUtils;
+import com.passman.desktop.DialogUtils;
 import com.passman.desktop.MainApp;
 import com.passman.desktop.SessionManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx. stage.FileChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java. util.List;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Controller for Secure Notes
+ * Controller for Secure Notes with advanced search and filtering
  */
 public class SecureNotesController {
+
+    // Search Scope enum
+    public enum SearchScope {
+        TITLE_ONLY("Title Only"),
+        CONTENT_ONLY("Content Only"),
+        TAGS_ONLY("Tags Only"),
+        BOTH("Title & Content"),
+        ALL("All Fields");
+
+        private final String displayName;
+        SearchScope(String displayName) { this.displayName = displayName; }
+        public String getDisplayName() { return displayName; }
+        @Override public String toString() { return displayName; }
+    }
+
+    // Sort Options enum
+    public enum NoteSortOption {
+        TITLE_ASC("Title (A-Z)"),
+        TITLE_DESC("Title (Z-A)"),
+        RECENT("Recently Modified"),
+        OLDEST("Oldest First"),
+        CREATED_RECENT("Recently Created"),
+        CREATED_OLDEST("Created Oldest");
+
+        private final String displayName;
+        NoteSortOption(String displayName) { this.displayName = displayName; }
+        public String getDisplayName() { return displayName; }
+        @Override public String toString() { return displayName; }
+    }
 
     @FXML private ListView<SecureNote> notesListView;
     @FXML private TextField searchField;
     @FXML private TextField titleField;
     @FXML private TextArea contentArea;
     @FXML private ComboBox<SecureNote.NoteCategory> categoryComboBox;
+    @FXML private ComboBox<SecureNote.NoteCategory> categoryFilterComboBox;
     @FXML private TextField tagsField;
+    @FXML private TextField tagFilterField;
     @FXML private CheckBox favoriteCheckbox;
     @FXML private ColorPicker colorPicker;
     @FXML private ListView<String> attachmentsListView;
     @FXML private Label statusLabel;
 
+    // Advanced filter controls
+    @FXML private ComboBox<SearchScope> searchScopeCombo;
+    @FXML private ComboBox<NoteSortOption> sortCombo;
+    @FXML private CheckBox hasAttachmentsCheck;
+    @FXML private CheckBox hasTagsCheck;
+
     private SecureNotesViewModel viewModel;
     private SecureNotesService notesService;
     private SecureNote currentNote;
+    private List<SecureNote> allNotes;
 
     @FXML
     public void initialize() {
@@ -48,9 +88,43 @@ public class SecureNotesController {
 
         viewModel = new SecureNotesViewModel(notesService);
 
+        // Setup category combo for editor
         categoryComboBox.setItems(FXCollections.observableArrayList(SecureNote.NoteCategory.values()));
-        categoryComboBox. setValue(SecureNote.NoteCategory.PERSONAL);
+        categoryComboBox.setValue(SecureNote.NoteCategory.PERSONAL);
 
+        // Setup category filter combo with "All" option
+        ObservableList<SecureNote.NoteCategory> categoryFilterItems = FXCollections.observableArrayList();
+        categoryFilterItems.add(null); // null represents "All Categories"
+        categoryFilterItems.addAll(SecureNote.NoteCategory.values());
+        categoryFilterComboBox.setItems(categoryFilterItems);
+        categoryFilterComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(SecureNote.NoteCategory item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(item == null ? "All Categories" : item.getDisplayName());
+            }
+        });
+        categoryFilterComboBox.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(SecureNote.NoteCategory item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(item == null ? "All Categories" : item.getDisplayName());
+                }
+            }
+        });
+
+        // Setup search scope combo
+        searchScopeCombo.setItems(FXCollections.observableArrayList(SearchScope.values()));
+        searchScopeCombo.setValue(SearchScope.ALL);
+
+        // Setup sort combo
+        sortCombo.setItems(FXCollections.observableArrayList(NoteSortOption.values()));
+        sortCombo.setValue(NoteSortOption.RECENT);
+
+        // Setup notes list view
         notesListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(SecureNote note, boolean empty) {
@@ -58,7 +132,10 @@ public class SecureNotesController {
                 if (empty || note == null) {
                     setText(null);
                 } else {
-                    setText(note.getTitle());
+                    String prefix = "";
+                    if (note.isFavorite()) prefix += "⭐ ";
+                    if (note.isHasAttachments()) prefix += "📎 ";
+                    setText(prefix + note.getTitle());
                 }
             }
         });
@@ -69,8 +146,14 @@ public class SecureNotesController {
             }
         });
 
+        // Setup search field listener
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
-            performSearch(newVal);
+            applyFiltersAndSort();
+        });
+
+        // Setup tag filter listener
+        tagFilterField.textProperty().addListener((obs, oldVal, newVal) -> {
+            applyFiltersAndSort();
         });
 
         loadAllNotes();
@@ -78,29 +161,121 @@ public class SecureNotesController {
 
     private void loadAllNotes() {
         try {
-            List<SecureNote> notes = notesService.getAllNotes();
-            ObservableList<SecureNote> observableNotes = FXCollections.observableArrayList(notes);
-            notesListView.setItems(observableNotes);
-            statusLabel.setText(notes.size() + " notes loaded");
+            allNotes = notesService.getAllNotes();
+            applyFiltersAndSort();
         } catch (Exception e) {
             DialogUtils.showError("Error", "Failed to load notes", e.getMessage());
         }
     }
 
-    private void performSearch(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            loadAllNotes();
-            return;
+    private void applyFiltersAndSort() {
+        if (allNotes == null) return;
+
+        String searchQuery = searchField.getText();
+        SearchScope scope = searchScopeCombo.getValue();
+        SecureNote.NoteCategory selectedCategory = categoryFilterComboBox.getValue();
+        String tagFilter = tagFilterField.getText();
+        boolean filterHasAttachments = hasAttachmentsCheck.isSelected();
+        boolean filterHasTags = hasTagsCheck.isSelected();
+        NoteSortOption sortOption = sortCombo.getValue();
+
+        List<SecureNote> filtered = allNotes.stream()
+                // Search filter based on scope
+                .filter(note -> {
+                    if (searchQuery == null || searchQuery.trim().isEmpty()) return true;
+                    String lowerQuery = searchQuery.toLowerCase();
+                    boolean matchesTitle = note.getTitle() != null &&
+                            note.getTitle().toLowerCase().contains(lowerQuery);
+                    boolean matchesContent = note.getContent() != null &&
+                            note.getContent().toLowerCase().contains(lowerQuery);
+                    boolean matchesTags = note.getTags() != null &&
+                            note.getTags().toLowerCase().contains(lowerQuery);
+
+                    if (scope == null || scope == SearchScope.ALL) {
+                        return matchesTitle || matchesContent || matchesTags;
+                    } else if (scope == SearchScope.BOTH) {
+                        return matchesTitle || matchesContent;
+                    } else if (scope == SearchScope.TITLE_ONLY) {
+                        return matchesTitle;
+                    } else if (scope == SearchScope.CONTENT_ONLY) {
+                        return matchesContent;
+                    } else if (scope == SearchScope.TAGS_ONLY) {
+                        return matchesTags;
+                    }
+                    return true;
+                })
+                // Category filter
+                .filter(note -> selectedCategory == null || note.getCategory() == selectedCategory)
+                // Tag filter
+                .filter(note -> {
+                    if (tagFilter == null || tagFilter.trim().isEmpty()) return true;
+                    return note.getTags() != null &&
+                            note.getTags().toLowerCase().contains(tagFilter.toLowerCase());
+                })
+                // Has attachments filter
+                .filter(note -> !filterHasAttachments || note.isHasAttachments())
+                // Has tags filter
+                .filter(note -> !filterHasTags || (note.getTags() != null && !note.getTags().trim().isEmpty()))
+                .collect(Collectors.toList());
+
+        // Apply sorting
+        if (sortOption != null) {
+            Comparator<SecureNote> comparator = switch (sortOption) {
+                case TITLE_ASC -> Comparator.comparing(SecureNote::getTitle,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
+                case TITLE_DESC -> Comparator.comparing(SecureNote::getTitle,
+                        Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)).reversed();
+                case RECENT -> Comparator.comparing(SecureNote::getLastModified,
+                        Comparator.nullsLast(Comparator.naturalOrder())).reversed();
+                case OLDEST -> Comparator.comparing(SecureNote::getLastModified,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+                case CREATED_RECENT -> Comparator.comparing(SecureNote::getCreatedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder())).reversed();
+                case CREATED_OLDEST -> Comparator.comparing(SecureNote::getCreatedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+            };
+            filtered.sort(comparator);
         }
 
-        try {
-            List<SecureNote> results = notesService.searchNotes(query);
-            ObservableList<SecureNote> observableResults = FXCollections.observableArrayList(results);
-            notesListView.setItems(observableResults);
-            statusLabel.setText(results.size() + " notes found");
-        } catch (Exception e) {
-            DialogUtils.showError("Error", "Search failed", e.getMessage());
-        }
+        ObservableList<SecureNote> observableNotes = FXCollections.observableArrayList(filtered);
+        notesListView.setItems(observableNotes);
+        statusLabel.setText(filtered.size() + " notes" + (filtered.size() != allNotes.size() ? " (filtered)" : ""));
+    }
+
+    @FXML
+    private void handleSearchScopeChange() {
+        applyFiltersAndSort();
+    }
+
+    @FXML
+    private void handleAdvancedFilterChange() {
+        applyFiltersAndSort();
+    }
+
+    @FXML
+    private void handleSortChange() {
+        applyFiltersAndSort();
+    }
+
+    @FXML
+    private void handleClearFilters() {
+        searchField.clear();
+        searchScopeCombo.setValue(SearchScope.ALL);
+        categoryFilterComboBox.setValue(null);
+        tagFilterField.clear();
+        hasAttachmentsCheck.setSelected(false);
+        hasTagsCheck.setSelected(false);
+        sortCombo.setValue(NoteSortOption.RECENT);
+        applyFiltersAndSort();
+    }
+
+    @FXML
+    private void handleShowAll() {
+        handleClearFilters();
+    }
+
+    private void performSearch(String query) {
+        applyFiltersAndSort();
     }
 
     private void loadNote(SecureNote note) {
@@ -266,23 +441,20 @@ public class SecureNotesController {
 
     @FXML
     private void handleFilterByCategory() {
-        SecureNote.NoteCategory category = categoryComboBox.getValue();
-        if (category != null) {
-            try {
-                List<SecureNote> filtered = notesService.getNotesByCategory(category);
-                ObservableList<SecureNote> observableFiltered = FXCollections.observableArrayList(filtered);
-                notesListView.setItems(observableFiltered);
-                statusLabel.setText(filtered.size() + " notes in " + category.getDisplayName());
-            } catch (Exception e) {
-                DialogUtils.showError("Error", "Failed to filter notes", e.getMessage());
-            }
-        }
+        // Category filter is already bound through applyFiltersAndSort
+        applyFiltersAndSort();
     }
 
     @FXML
     private void handleShowFavorites() {
         try {
-            List<SecureNote> favorites = notesService.getFavoriteNotes();
+            // Filter to show only favorites
+            if (allNotes == null) return;
+
+            List<SecureNote> favorites = allNotes.stream()
+                    .filter(SecureNote::isFavorite)
+                    .collect(Collectors.toList());
+
             ObservableList<SecureNote> observableFavorites = FXCollections.observableArrayList(favorites);
             notesListView.setItems(observableFavorites);
             statusLabel.setText(favorites.size() + " favorite notes");

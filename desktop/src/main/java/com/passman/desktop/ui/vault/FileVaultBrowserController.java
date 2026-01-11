@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -145,17 +146,34 @@ public class FileVaultBrowserController {
 
         try {
             if (currentVault.isHasSeparatePassword()) {
-                // Show password dialog
-                TextInputDialog dialog = new TextInputDialog();
+                // Show proper password dialog using PasswordField
+                Dialog<String> dialog = new Dialog<>();
                 dialog.setTitle("Unlock Vault");
-                dialog. setHeaderText("Enter vault password");
-                dialog.setContentText("Password:");
+                dialog.setHeaderText("Enter password for '" + currentVault.getVaultName() + "'");
+
+                ButtonType unlockButtonType = new ButtonType("Unlock", ButtonBar.ButtonData.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().addAll(unlockButtonType, ButtonType.CANCEL);
+
+                PasswordField passwordField = new PasswordField();
+                passwordField.setPromptText("Vault password");
+                passwordField.setPrefWidth(300);
+
+                VBox content = new VBox(10);
+                content.getChildren().addAll(new Label("Password:"), passwordField);
+                dialog.getDialogPane().setContent(content);
+
+                dialog.setResultConverter(dialogButton -> {
+                    if (dialogButton == unlockButtonType) {
+                        return passwordField.getText();
+                    }
+                    return null;
+                });
 
                 dialog.showAndWait().ifPresent(password -> {
                     try {
                         currentVaultKey = vaultService.unlockVault(
                                 currentVault.getId(),
-                                password. toCharArray(),
+                                password.toCharArray(),
                                 SessionManager.getInstance().getMasterKey()
                         );
                         loadVaultFiles();
@@ -241,10 +259,40 @@ public class FileVaultBrowserController {
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select File to Encrypt");
+
+        // Add file type filters based on vault type
+        if (currentVault.getVaultType() != null) {
+            switch (currentVault.getVaultType()) {
+                case IMAGES:
+                    fileChooser.getExtensionFilters().add(
+                            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.webp", "*.svg"));
+                    break;
+                case PDFS:
+                    fileChooser.getExtensionFilters().add(
+                            new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+                    break;
+                case DOCUMENTS:
+                    fileChooser.getExtensionFilters().add(
+                            new FileChooser.ExtensionFilter("Documents", "*.doc", "*.docx", "*.xls", "*.xlsx", "*.ppt", "*.pptx", "*.txt", "*.pdf", "*.odt", "*.ods"));
+                    break;
+                default:
+                    fileChooser.getExtensionFilters().add(
+                            new FileChooser.ExtensionFilter("All Files", "*.*"));
+                    break;
+            }
+        }
+
         Stage stage = (Stage) filesListView.getScene().getWindow();
         File file = fileChooser.showOpenDialog(stage);
 
         if (file != null) {
+            // Validate file type for restricted vaults
+            if (!isFileTypeAllowed(file, currentVault.getVaultType())) {
+                DialogUtils.showWarning("Invalid File Type", "File Not Allowed",
+                        "This vault only accepts " + getVaultTypeDescription(currentVault.getVaultType()) + " files.");
+                return;
+            }
+
             javafx.concurrent.Task<EncryptedFile> encryptTask = new javafx.concurrent.Task<>() {
                 @Override
                 protected EncryptedFile call() throws Exception {
@@ -437,5 +485,36 @@ public class FileVaultBrowserController {
         if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
         if (bytes < 1024 * 1024 * 1024) return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
         return String. format("%.1f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+    }
+
+    private boolean isFileTypeAllowed(File file, FileVault.VaultType vaultType) {
+        if (vaultType == null || vaultType == FileVault.VaultType.OTHERS || vaultType == FileVault.VaultType.CUSTOM) {
+            return true; // Allow all files
+        }
+
+        String fileName = file.getName().toLowerCase();
+
+        return switch (vaultType) {
+            case IMAGES -> fileName.endsWith(".png") || fileName.endsWith(".jpg") ||
+                    fileName.endsWith(".jpeg") || fileName.endsWith(".gif") ||
+                    fileName.endsWith(".bmp") || fileName.endsWith(".webp") ||
+                    fileName.endsWith(".svg");
+            case PDFS -> fileName.endsWith(".pdf");
+            case DOCUMENTS -> fileName.endsWith(".doc") || fileName.endsWith(".docx") ||
+                    fileName.endsWith(".xls") || fileName.endsWith(".xlsx") ||
+                    fileName.endsWith(".ppt") || fileName.endsWith(".pptx") ||
+                    fileName.endsWith(".txt") || fileName.endsWith(".pdf") ||
+                    fileName.endsWith(".odt") || fileName.endsWith(".ods");
+            default -> true;
+        };
+    }
+
+    private String getVaultTypeDescription(FileVault.VaultType vaultType) {
+        return switch (vaultType) {
+            case IMAGES -> "image (PNG, JPG, GIF, BMP, WebP, SVG)";
+            case PDFS -> "PDF";
+            case DOCUMENTS -> "document (DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, PDF, ODT, ODS)";
+            default -> "any";
+        };
     }
 }

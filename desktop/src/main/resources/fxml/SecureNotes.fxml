@@ -10,16 +10,43 @@
 
     <!-- Top Bar -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
-            <padding>
-                <Insets top="10" right="20" bottom="10" left="20"/>
-            </padding>
+        <VBox styleClass="top-bar">
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="toolbar">
+                <padding>
+                    <Insets top="10" right="20" bottom="10" left="20"/>
+                </padding>
 
-            <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
-            <Label text="📝 Secure Notes" styleClass="page-title"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <TextField fx:id="searchField" promptText="Search notes..." prefWidth="250"/>
-        </HBox>
+                <Button text="← Back" onAction="#handleBackToDashboard" styleClass="back-button"/>
+                <Label text="📝 Secure Notes" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="searchField" promptText="Search notes..." prefWidth="250"/>
+            </HBox>
+
+            <!-- Advanced Search/Filter Panel -->
+            <HBox alignment="CENTER_LEFT" spacing="15" styleClass="filter-panel">
+                <padding>
+                    <Insets top="5" right="20" bottom="10" left="20"/>
+                </padding>
+
+                <Label text="Search in:" styleClass="filter-label"/>
+                <ComboBox fx:id="searchScopeCombo" prefWidth="130" onAction="#handleSearchScopeChange"/>
+
+                <Separator orientation="VERTICAL"/>
+
+                <Label text="Filter:" styleClass="filter-label"/>
+                <CheckBox fx:id="hasAttachmentsCheck" text="📎 Has Attachments" onAction="#handleAdvancedFilterChange"/>
+                <CheckBox fx:id="hasTagsCheck" text="🏷️ Has Tags" onAction="#handleAdvancedFilterChange"/>
+
+                <Separator orientation="VERTICAL"/>
+
+                <Label text="Sort:" styleClass="filter-label"/>
+                <ComboBox fx:id="sortCombo" prefWidth="150" onAction="#handleSortChange"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button text="Clear Filters" onAction="#handleClearFilters" styleClass="secondary-button"/>
+            </HBox>
+        </VBox>
     </top>
 
     <!-- Center: SplitPane -->
@@ -35,10 +62,13 @@
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <Button text="+ New Note" onAction="#handleNewNote" styleClass="primary-button"/>
                     <Button text="⭐ Favorites" onAction="#handleShowFavorites" styleClass="action-button"/>
+                    <Button text="📋 All" onAction="#handleShowAll" styleClass="action-button"/>
                 </HBox>
 
                 <ComboBox fx:id="categoryFilterComboBox" promptText="Filter by category..."
                           onAction="#handleFilterByCategory" maxWidth="Infinity"/>
+
+                <TextField fx:id="tagFilterField" promptText="🏷️ Filter by tag..." maxWidth="Infinity"/>
 
                 <ListView fx:id="notesListView" VBox.vgrow="ALWAYS"/>
 

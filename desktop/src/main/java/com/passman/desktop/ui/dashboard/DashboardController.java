@@ -7,10 +7,12 @@ import com.passman.desktop.MainApp;
 import com.passman.desktop.SessionManager;
 import com.passman.desktop.ui.credential.CredentialEditorController;
 import javafx.fxml.FXML;
-import javafx.scene. control.Button;
-import javafx.scene. control.Label;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
-import javafx.scene. control.TextField;
+import javafx.scene.control.TextField;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -18,9 +20,9 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx. scene.Scene;
-import javafx. stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.collections.FXCollections;
 import com.passman.core.repository.CredentialRepositoryImpl;
 import com.passman.core.services.EncryptionServiceImpl;
 import java.util.Optional;
@@ -40,7 +42,26 @@ public class DashboardController {
     private Button addButton;
 
     @FXML
-    private TableView<DashboardViewModel. CredentialItem> credentialsTable;
+    private TableView<DashboardViewModel.CredentialItem> credentialsTable;
+
+    // Filter controls
+    @FXML
+    private ComboBox<DashboardViewModel.AgeFilter> ageFilterCombo;
+
+    @FXML
+    private ComboBox<DashboardViewModel.StrengthFilter> strengthFilterCombo;
+
+    @FXML
+    private ComboBox<DashboardViewModel.SortOption> sortByCombo;
+
+    @FXML
+    private ComboBox<DashboardViewModel.SearchScope> searchScopeCombo;
+
+    @FXML
+    private CheckBox favoritesOnlyCheck;
+
+    @FXML
+    private CheckBox breachedOnlyCheck;
 
     private DashboardViewModel viewModel;
 
@@ -59,8 +80,11 @@ public class DashboardController {
         // Bind table to ViewModel
         credentialsTable.setItems(viewModel.getCredentials());
 
-        //  Setup table columns with proper cell value factories
+        // Setup table columns with proper cell value factories
         setupTableColumns();
+
+        // Setup filter controls
+        setupFilterControls();
 
         // Add row selection listener
         credentialsTable.getSelectionModel().selectedItemProperty().addListener(
@@ -71,14 +95,60 @@ public class DashboardController {
                 }
         );
 
-        // ✅ ADD THIS: Add context menu
+        // Add context menu
         setupContextMenu();
 
         // Bind search field
-        searchField.textProperty().bindBidirectional(viewModel. searchQueryProperty());
+        searchField.textProperty().bindBidirectional(viewModel.searchQueryProperty());
 
         // Load credentials
         viewModel.loadCredentials();
+    }
+
+    private void setupFilterControls() {
+        // Setup Search scope combo
+        searchScopeCombo.setItems(FXCollections.observableArrayList(DashboardViewModel.SearchScope.values()));
+        searchScopeCombo.setValue(DashboardViewModel.SearchScope.ALL);
+        searchScopeCombo.valueProperty().bindBidirectional(viewModel.searchScopeProperty());
+
+        // Setup Age filter combo
+        ageFilterCombo.setItems(FXCollections.observableArrayList(DashboardViewModel.AgeFilter.values()));
+        ageFilterCombo.setValue(DashboardViewModel.AgeFilter.ALL);
+        ageFilterCombo.valueProperty().bindBidirectional(viewModel.ageFilterProperty());
+
+        // Setup Strength filter combo
+        strengthFilterCombo.setItems(FXCollections.observableArrayList(DashboardViewModel.StrengthFilter.values()));
+        strengthFilterCombo.setValue(DashboardViewModel.StrengthFilter.ALL);
+        strengthFilterCombo.valueProperty().bindBidirectional(viewModel.strengthFilterProperty());
+
+        // Setup Sort combo
+        sortByCombo.setItems(FXCollections.observableArrayList(DashboardViewModel.SortOption.values()));
+        sortByCombo.setValue(DashboardViewModel.SortOption.TITLE_ASC);
+        sortByCombo.valueProperty().bindBidirectional(viewModel.sortOptionProperty());
+
+        // Setup checkboxes
+        favoritesOnlyCheck.selectedProperty().bindBidirectional(viewModel.favoritesOnlyProperty());
+        breachedOnlyCheck.selectedProperty().bindBidirectional(viewModel.breachedOnlyProperty());
+    }
+
+    @FXML
+    private void handleFilterChange() {
+        // Filters are already bound, this is for explicit refresh if needed
+    }
+
+    @FXML
+    private void handleSearchScopeChange() {
+        // Search scope is already bound, this is for explicit refresh if needed
+    }
+
+    @FXML
+    private void handleSortChange() {
+        // Sort is already bound, this is for explicit refresh if needed
+    }
+
+    @FXML
+    private void handleClearFilters() {
+        viewModel.clearFilters();
     }
 
     @FXML
@@ -162,23 +232,27 @@ public class DashboardController {
         // Get columns (they're defined in FXML)
         @SuppressWarnings("unchecked")
         TableColumn<DashboardViewModel.CredentialItem, String> titleCol =
-                (TableColumn<DashboardViewModel. CredentialItem, String>) credentialsTable.getColumns().get(0);
+                (TableColumn<DashboardViewModel.CredentialItem, String>) credentialsTable.getColumns().get(0);
         @SuppressWarnings("unchecked")
         TableColumn<DashboardViewModel.CredentialItem, String> usernameCol =
                 (TableColumn<DashboardViewModel.CredentialItem, String>) credentialsTable.getColumns().get(1);
         @SuppressWarnings("unchecked")
-        TableColumn<DashboardViewModel.CredentialItem, String> urlCol =
+        TableColumn<DashboardViewModel.CredentialItem, String> emailCol =
                 (TableColumn<DashboardViewModel.CredentialItem, String>) credentialsTable.getColumns().get(2);
         @SuppressWarnings("unchecked")
-        TableColumn<DashboardViewModel.CredentialItem, String> ageCol =
+        TableColumn<DashboardViewModel.CredentialItem, String> urlCol =
                 (TableColumn<DashboardViewModel.CredentialItem, String>) credentialsTable.getColumns().get(3);
         @SuppressWarnings("unchecked")
-        TableColumn<DashboardViewModel.CredentialItem, String> strengthCol =
+        TableColumn<DashboardViewModel.CredentialItem, String> ageCol =
                 (TableColumn<DashboardViewModel.CredentialItem, String>) credentialsTable.getColumns().get(4);
+        @SuppressWarnings("unchecked")
+        TableColumn<DashboardViewModel.CredentialItem, String> strengthCol =
+                (TableColumn<DashboardViewModel.CredentialItem, String>) credentialsTable.getColumns().get(5);
 
         // Set cell value factories
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
         usernameCol.setCellValueFactory(new PropertyValueFactory<>("username"));
+        emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
         urlCol.setCellValueFactory(new PropertyValueFactory<>("url"));
         ageCol.setCellValueFactory(new PropertyValueFactory<>("ageBadge"));
         strengthCol.setCellValueFactory(new PropertyValueFactory<>("strength"));
@@ -253,7 +327,15 @@ public class DashboardController {
             }
         });
 
-        contextMenu.getItems().addAll(editItem, deleteItem, new SeparatorMenuItem(), copyPasswordItem);
+        MenuItem shareQRItem = new MenuItem("📱 Share via QR Code");
+        shareQRItem.setOnAction(e -> {
+            var selected = credentialsTable.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                handleShareQR(selected);
+            }
+        });
+
+        contextMenu.getItems().addAll(editItem, deleteItem, new SeparatorMenuItem(), copyPasswordItem, shareQRItem);
         credentialsTable.setContextMenu(contextMenu);
     }
 
@@ -345,6 +427,140 @@ public class DashboardController {
             }
         } catch (Exception e) {
             DialogUtils.showError("Error", "Failed to copy password", e.getMessage());
+        }
+    }
+
+    // ✅ Share credential via QR code
+    private void handleShareQR(DashboardViewModel.CredentialItem item) {
+        try {
+            CredentialRepositoryImpl repository = new CredentialRepositoryImpl(DatabaseManager.getInstance());
+            Optional<Credential> credentialOpt = repository.findById(item.getId());
+
+            if (credentialOpt.isPresent()) {
+                Credential credential = credentialOpt.get();
+
+                // Decrypt password
+                byte[] iv = credential.getEncryptionIV();
+                byte[] encrypted = credential.getEncryptedPassword();
+                byte[] combined = new byte[iv.length + encrypted.length];
+                System.arraycopy(iv, 0, combined, 0, iv.length);
+                System.arraycopy(encrypted, 0, combined, iv.length, encrypted.length);
+                String base64 = java.util.Base64.getEncoder().encodeToString(combined);
+
+                EncryptionServiceImpl encryptionService = new EncryptionServiceImpl();
+                String decrypted = encryptionService.decryptPassword(
+                        base64,
+                        SessionManager.getInstance().getMasterKey()
+                );
+
+                // Security warning
+                boolean confirm = DialogUtils.showConfirmation(
+                        "⚠️ Security Warning",
+                        "Share '" + credential.getTitle() + "' via QR Code?",
+                        "The QR code will contain the credential data including the password.\n\n" +
+                                "Only share QR codes in secure, private locations.\n" +
+                                "Anyone who scans this QR code will have access to this credential.\n\n" +
+                                "Do you want to continue?"
+                );
+                if (!confirm) return;
+
+                // Generate QR code using pure JavaFX (no AWT/Swing dependency)
+                com.passman.core.services.QRCodeService qrService = new com.passman.core.services.QRCodeService();
+                
+                final int qrSize = 400;
+                javafx.scene.image.WritableImage writableImage = new javafx.scene.image.WritableImage(qrSize, qrSize);
+                javafx.scene.image.PixelWriter pixelWriter = writableImage.getPixelWriter();
+                
+                // Fill with white background
+                for (int y = 0; y < qrSize; y++) {
+                    for (int x = 0; x < qrSize; x++) {
+                        pixelWriter.setColor(x, y, javafx.scene.paint.Color.WHITE);
+                    }
+                }
+                
+                // Generate QR code directly to JavaFX image (no AWT)
+                qrService.generateCredentialQRCodeDirect(
+                        credential.getTitle(),
+                        credential.getUsername(),
+                        credential.getEmail(),
+                        decrypted,
+                        credential.getUrl(),
+                        (x, y) -> pixelWriter.setColor(x, y, javafx.scene.paint.Color.BLACK)
+                );
+
+                javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(writableImage);
+                imageView.setFitWidth(400);
+                imageView.setFitHeight(400);
+                imageView.setPreserveRatio(true);
+
+                javafx.scene.control.Dialog<Void> dialog = new javafx.scene.control.Dialog<>();
+                dialog.setTitle("Share via QR Code");
+                dialog.setHeaderText("Scan this QR code with PassMan Android to import");
+
+                javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(15);
+                content.setAlignment(javafx.geometry.Pos.CENTER);
+                content.getChildren().addAll(
+                        new javafx.scene.control.Label("📱 " + credential.getTitle()),
+                        imageView,
+                        new javafx.scene.control.Label("Compatible with PassMan Android app")
+                );
+                content.setStyle("-fx-padding: 20;");
+
+                dialog.getDialogPane().setContent(content);
+                dialog.getDialogPane().getButtonTypes().addAll(
+                        javafx.scene.control.ButtonType.CLOSE,
+                        new javafx.scene.control.ButtonType("💾 Save Image", javafx.scene.control.ButtonBar.ButtonData.LEFT)
+                );
+
+                // Handle save button - pass the image directly instead of bytes
+                final javafx.scene.image.Image finalImage = writableImage;
+                final String finalTitle = credential.getTitle();
+                dialog.setResultConverter(buttonType -> {
+                    if (buttonType.getButtonData() == javafx.scene.control.ButtonBar.ButtonData.LEFT) {
+                        saveQRCodeImageFromFx(finalImage, finalTitle);
+                    }
+                    return null;
+                });
+
+                dialog.showAndWait();
+            }
+        } catch (Exception e) {
+            DialogUtils.showError("Error", "Failed to generate QR code", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void saveQRCodeImageFromFx(javafx.scene.image.Image image, String title) {
+        try {
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Save QR Code");
+            String fileName = "credential_qr_" + title.replaceAll("[^a-zA-Z0-9]", "_") + ".png";
+            fileChooser.setInitialFileName(fileName);
+            fileChooser.getExtensionFilters().add(
+                    new javafx.stage.FileChooser.ExtensionFilter("PNG Image", "*.png")
+            );
+
+            java.io.File file = fileChooser.showSaveDialog(credentialsTable.getScene().getWindow());
+            if (file != null) {
+                // Convert JavaFX Image to BufferedImage (without SwingFXUtils)
+                int width = (int) image.getWidth();
+                int height = (int) image.getHeight();
+                java.awt.image.BufferedImage bufferedImage = new java.awt.image.BufferedImage(
+                        width, height, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+                javafx.scene.image.PixelReader pixelReader = image.getPixelReader();
+                
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        int argb = pixelReader.getArgb(x, y);
+                        bufferedImage.setRGB(x, y, argb);
+                    }
+                }
+                
+                javax.imageio.ImageIO.write(bufferedImage, "PNG", file);
+                DialogUtils.showInfo("Success", "QR Code Saved", "Saved to: " + file.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            DialogUtils.showError("Error", "Failed to save QR code", e.getMessage());
         }
     }
 
