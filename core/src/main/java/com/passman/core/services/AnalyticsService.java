@@ -18,14 +18,16 @@ public class AnalyticsService {
 
     private final CredentialRepository credentialRepository;
     private final EncryptionServiceImpl encryptionService;
+    private final PasswordStrengthService passwordStrengthService;
 
     public AnalyticsService(DatabaseManager dbManager) {
         this.credentialRepository = new CredentialRepositoryImpl(dbManager);
         this.encryptionService = new EncryptionServiceImpl();
+        this.passwordStrengthService = new PasswordStrengthService();
     }
 
     /**
-     * Calculate overall security score (0-100, using your custom logic)
+     * Calculate overall security score (0-100, using enhanced logic with personal info detection)
      */
     public int calculateSecurityScore(SecretKey masterKey) throws Exception {
         List<Credential> credentials = credentialRepository.findAll();
@@ -39,7 +41,7 @@ public class AnalyticsService {
 
         for (Credential cred : credentials) {
             String password = decryptPasswordForCredential(cred, masterKey);
-            totalScore += calculatePasswordStrengthScore(password);
+            totalScore += calculatePasswordStrengthScoreWithContext(password, cred);
         }
 
         return (totalScore * 100) / maxScore;
@@ -47,21 +49,23 @@ public class AnalyticsService {
 
     /**
      * Calculates password strength score for the given credential,
-     * using your custom scoring function on freshly decrypted password.
+     * using enhanced scoring with personal info detection.
      */
     public int calculatePasswordScore(Credential credential, SecretKey masterKey) throws Exception {
         String password = decryptPasswordForCredential(credential, masterKey);
-        return calculatePasswordStrengthScore(password);
+        return calculatePasswordStrengthScoreWithContext(password, credential);
     }
 
     /**
      * Calculates strength label ("Strong", "Medium", "Weak") based on freshly computed score.
+     * Now includes personal info checking for enhanced security analysis.
      */
     public String calculateStrength(Credential cred, SecretKey masterKey) {
         int score = 0;
         try {
             String password = decryptPasswordForCredential(cred, masterKey);
-            score = calculatePasswordStrengthScore(password);
+            PasswordStrengthService.PersonalInfoContext context = buildPersonalInfoContext(cred);
+            score = passwordStrengthService.calculateStrength(password, context).getScore();
         } catch (Exception e) {
             score = 0;
         }
@@ -71,18 +75,32 @@ public class AnalyticsService {
     }
 
     /**
-     * Your provided scoring function.
+     * Build personal info context from a credential for enhanced strength checking
+     */
+    private PasswordStrengthService.PersonalInfoContext buildPersonalInfoContext(Credential cred) {
+        PasswordStrengthService.PersonalInfoContext context = new PasswordStrengthService.PersonalInfoContext();
+        if (cred.getUsername() != null) {
+            context.setUsername(cred.getUsername());
+        }
+        if (cred.getEmail() != null) {
+            context.setEmail(cred.getEmail());
+        }
+        return context;
+    }
+
+    /**
+     * Password strength scoring with personal info detection.
      */
     private int calculatePasswordStrengthScore(String password) {
-        if (password == null || password.isEmpty()) return 0;
-        int score = 0;
-        if (password.length() >= 8) score += 25;
-        if (password.length() >= 12) score += 25;
-        if (password.matches(".*[A-Z].*")) score += 15;
-        if (password.matches(".*[a-z].*")) score += 15;
-        if (password.matches(".*[0-9].*")) score += 10;
-        if (password.matches(".*[!@#$%^&*].*")) score += 10;
-        return score;
+        return passwordStrengthService.getScore(password);
+    }
+
+    /**
+     * Password strength scoring with credential context for personal info detection.
+     */
+    private int calculatePasswordStrengthScoreWithContext(String password, Credential cred) {
+        PasswordStrengthService.PersonalInfoContext context = buildPersonalInfoContext(cred);
+        return passwordStrengthService.getScore(password, context);
     }
 
     /**
@@ -174,19 +192,36 @@ public class AnalyticsService {
     }
 
     /**
-     * Get top security recommendations
+     * Get top security recommendations with enhanced personal info detection
      */
     public List<SecurityRecommendation> getRecommendations(SecretKey masterKey) throws Exception {
         List<SecurityRecommendation> recommendations = new ArrayList<>();
         List<Credential> credentials = credentialRepository.findAll();
 
         int weakCount = 0;
+        int personalInfoCount = 0;
         for (Credential cred : credentials) {
             String password = decryptPasswordForCredential(cred, masterKey);
-            if (calculatePasswordStrengthScore(password) < 50) {
+            PasswordStrengthService.PersonalInfoContext context = buildPersonalInfoContext(cred);
+            PasswordStrengthService.StrengthResult result = passwordStrengthService.calculateStrength(password, context);
+
+            if (result.getScore() < 50) {
                 weakCount++;
             }
+            if (result.containsPersonalInfo()) {
+                personalInfoCount++;
+            }
         }
+
+        if (personalInfoCount > 0) {
+            recommendations.add(new SecurityRecommendation(
+                    "🔴 CRITICAL",
+                    "Personal Info in Passwords",
+                    personalInfoCount + " passwords contain personal information (username, email, phone, or dates). This makes them easier to guess.",
+                    "high"
+            ));
+        }
+
         if (weakCount > 0) {
             recommendations.add(new SecurityRecommendation(
                     "🔴 CRITICAL",
@@ -250,7 +285,7 @@ public class AnalyticsService {
 
             for (Credential cred : credentials) {
                 String password = decryptPasswordForCredential(cred, masterKey);
-                totalScore += calculatePasswordStrengthScore(password);
+                totalScore += calculatePasswordStrengthScoreWithContext(password, cred);
                 long age = cred.getCreatedAt() != null
                         ? ChronoUnit.DAYS.between(cred.getCreatedAt(), LocalDateTime.now())
                         : 0;

@@ -149,4 +149,31 @@ public class FileVaultService {
     public Optional<FileVault> getVaultByType(FileVault.VaultType type) throws Exception {
         return vaultRepository.findByType(type);
     }
+
+    /**
+     * Delete a vault and all its files
+     */
+    public void deleteVault(Long vaultId) throws Exception {
+        Optional<FileVault> vaultOpt = vaultRepository.findById(vaultId);
+        if (vaultOpt.isEmpty()) {
+            throw new IllegalArgumentException("Vault not found");
+        }
+
+        // Delete all encrypted files associated with this vault
+        deleteVaultFiles(vaultId);
+
+        // Delete the vault itself
+        vaultRepository.delete(vaultId);
+    }
+
+    private void deleteVaultFiles(Long vaultId) throws SQLException {
+        String sql = "DELETE FROM encrypted_files WHERE vault_id = ?";
+
+        try (java.sql.Connection conn = DatabaseManager.getInstance().getConnection();
+             java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, vaultId);
+            stmt.executeUpdate();
+        }
+    }
 }
