@@ -10,6 +10,19 @@
 
 ---
 
+## ⬇️ Downloads
+
+Get the latest installers for your platform:
+
+| Platform | Installer | Version |
+|----------|-----------|---------|
+| 📱 **Android** | [PassMan.apk](../../releases) | Latest Release |
+| 🪟 **Windows** | [PassMan.exe](../../releases) | Latest Release |
+
+**👉 [View all releases →](../../releases)**
+
+---
+
 ## 📋 Quick Navigation
 
 ### 🚀 Quick Links
